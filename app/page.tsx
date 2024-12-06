@@ -15,10 +15,10 @@ export default function Home() {
         <div className="max-w-xl mx-auto md:mx-0 w-full space-y-8">
           <div className="text-center md:text-left space-y-4">
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">
-              Tu Mercado de Autos de Confianza en Bahia Blanca
+              El Lugar de Confianza para Comprar y Vender Autos en Bahía Blanca
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground">
-              Compra, vende o consulta sobre vehículos con total confianza
+              Descubre una experiencia segura y personalizada para adquirir, vender o informarte sobre vehículos.
             </p>
           </div>
 

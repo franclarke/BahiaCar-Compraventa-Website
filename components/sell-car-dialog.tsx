@@ -13,7 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Textarea } from "./ui/textarea";
+import { Textarea } from "@/components/ui/textarea";
 
 export function SellCarDialog() {
   const [open, setOpen] = useState(false);
@@ -39,7 +39,7 @@ export function SellCarDialog() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch("/api/sell", {
+      const response = await fetch("/api/sell_request", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -49,7 +49,7 @@ export function SellCarDialog() {
 
       toast({
         title: "¡Éxito!",
-        description: "Tu auto ha sido publicado correctamente.",
+        description: "Tu solicitud de venta se ha enviado correctamente. Pronto te contactaremos.",
       });
       setOpen(false);
       setFormData({
@@ -148,7 +148,7 @@ export function SellCarDialog() {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="condition">Condición</Label>
+            <Label htmlFor="condition">Condición (Ej: Nuevo/Usado)</Label>
             <Input
               id="condition"
               name="condition"
@@ -178,7 +178,7 @@ export function SellCarDialog() {
             />
           </div>
           <div className="space-y-2 col-span-2">
-            <Label>Mensaje</Label>
+            <Label htmlFor="description">Mensaje</Label>
             <Textarea
               id="description"
               name="description"
