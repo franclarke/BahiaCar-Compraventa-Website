@@ -13,7 +13,7 @@ export function Header() {
           href="/"
           className="text-2xl font-bold hover:text-primary transition-colors flex items-center"
         >
-          <span className="">AutoCar Bahia</span>
+          <span className="">BahiaCar Compraventa</span>
         </Link>
 
         {/* Logo central */}
