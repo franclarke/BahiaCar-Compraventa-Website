@@ -13,9 +13,9 @@ if (typeof window === 'undefined') {
 }
 
 export const metadata: Metadata = {
-  title: 'Auto Marketplace - Buy & Sell Cars',
-  description: 'Your trusted platform for buying and selling premium vehicles',
-  keywords: 'cars, auto marketplace, buy cars, sell cars, used cars, new cars',
+  title: 'BahiaCar- Compra y Venta de Autos y Camionetas',
+  description: 'La plataforma confiable en Bahía Blanca para comprar y vender autos y camionetas, nuevos y usados.',
+  keywords: 'autos, camionetas, Bahía Blanca, Buenos Aires, comprar autos, vender autos, autos usados, autos nuevos, Argentina',
 };
 
 export default function RootLayout({

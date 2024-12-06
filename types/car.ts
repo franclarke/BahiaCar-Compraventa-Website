@@ -5,21 +5,22 @@ export interface Car {
   brand: string;
   model: string;
   year: number;
-  price: number;
-  mileage: number;
   status: CarStatus;
-  type: string;
+  mileage: number;
+  price: number;
   transmission: string;
+  type: string;
   fuelType: string;
-  description: string;
   images: string[];
+  description: string;
+  createdAt: Date;
 }
 
 export interface FilterParams {
-  status?: CarStatus;
-  type?: string;
   brand?: string;
   model?: string;
+  type?: string;
+  status?: CarStatus;
   transmission?: string;
   minPrice?: number;
   maxPrice?: number;

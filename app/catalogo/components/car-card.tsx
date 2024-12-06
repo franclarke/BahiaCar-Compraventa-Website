@@ -1,67 +1,127 @@
+"use client";
+
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
-import type { Car } from "@/types/car";
+import { Button } from "@/components/ui/button";
+import { Car } from "@prisma/client";
+import { formatPrice } from "@/lib/utils";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface CarCardProps {
   car: Car;
 }
 
 export function CarCard({ car }: CarCardProps) {
-  const formatter = new Intl.NumberFormat("es-AR", {
-    style: "currency",
-    currency: "USD",
-  });
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const nextImage = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (currentImageIndex < car.images.length - 1) {
+      setCurrentImageIndex(prev => prev + 1);
+    } else {
+      setCurrentImageIndex(0);
+    }
+  };
+
+  const previousImage = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (currentImageIndex > 0) {
+      setCurrentImageIndex(prev => prev - 1);
+    } else {
+      setCurrentImageIndex(car.images.length - 1);
+    }
+  };
 
   return (
-    <Link href={`/catalogo/${car.id}`} className="block group">
-      <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-        <div className="relative aspect-[16/9] overflow-hidden">
-          <Image
-            src={
-              car.images[0] || 
-              "https://static.vecteezy.com/system/resources/thumbnails/008/585/294/small/3d-rendering-sport-blue-car-on-white-bakcground-jpg-free-photo.jpg"
-            }
-            alt={`${car.brand} ${car.model}`}
-            fill
-            className="object-cover group-hover:scale-110 transition-transform duration-300"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          />
-          <div className="absolute top-2 right-2">
-            <Badge variant={car.status === "NEW" ? "default" : "secondary"}>
-              {car.status === "NEW" ? "Nuevo" : "Usado"}
+    <div className="p-2 md:p-0">
+      <Link href={`/catalogo/${car.id}`}>
+        <Card className="overflow-hidden hover:shadow-lg transition-shadow">
+          {/* Carrusel de Imágenes */}
+          <div className="relative w-full aspect-[4/3] group">
+            <Image
+              src={car.images[currentImageIndex] || '/placeholder-car.jpg'}
+              alt={`${car.brand} ${car.model}`}
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              priority
+            />
+            
+            {/* Controles del carrusel */}
+            {car.images.length > 1 && (
+              <>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute left-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-white/80 hover:bg-white/90"
+                  onClick={previousImage}
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-white/80 hover:bg-white/90"
+                  onClick={nextImage}
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+
+                {/* Indicadores de imágenes */}
+                <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1">
+                  {car.images.map((_, index) => (
+                    <div
+                      key={index}
+                      className={`w-1.5 h-1.5 rounded-full transition-colors ${
+                        index === currentImageIndex
+                          ? 'bg-white'
+                          : 'bg-white/50'
+                      }`}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
+
+            <Badge 
+              variant={car.status === 'NEW' ? 'default' : 'secondary'}
+              className="absolute top-2 right-2"
+            >
+              {car.status === 'NEW' ? 'Nuevo' : 'Usado'}
             </Badge>
           </div>
-        </div>
-        <div className="p-4">
-          <div className="flex justify-between items-start mb-2">
-            <div>
-              <h3 className="text-lg font-bold group-hover:text-primary transition-colors">
-                {car.brand} {car.model}
-              </h3>
-              <p className="text-sm text-muted-foreground">{car.year}</p>
+
+          <CardContent className="p-4">
+            {/* Información Principal */}
+            <div className="space-y-2">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="font-semibold text-lg md:text-xl truncate">
+                    {car.brand} {car.model}
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    {car.year} • {car.transmission} • {car.fuelType}
+                  </p>
+                </div>
+                <p className="text-lg md:text-xl font-bold">
+                  USD {formatPrice(car.price)}
+                </p>
+              </div>
+
+              {/* Detalles Adicionales */}
+              <div className="flex flex-wrap gap-2 mt-2">
+                <Badge variant="outline">{car.type}</Badge>
+                {car.status === 'USED' && (
+                  <Badge variant="outline">{car.mileage.toLocaleString()} km</Badge>
+                )}
+              </div>
             </div>
-            <p className="text-xl font-bold text-primary">
-              {formatter.format(car.price)}
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-2 mt-3">
-            <Badge variant="outline" className="text-xs">
-              {car.transmission}
-            </Badge>
-            <Badge variant="outline" className="text-xs">
-              {car.type}
-            </Badge>
-            <Badge variant="outline" className="text-xs">
-              {car.fuelType}
-            </Badge>
-            <Badge variant="outline" className="text-xs">
-              {car.mileage.toLocaleString()} km
-            </Badge>
-          </div>
-        </div>
-      </Card>
-    </Link>
+          </CardContent>
+        </Card>
+      </Link>
+    </div>
   );
 }

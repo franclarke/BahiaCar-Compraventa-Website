@@ -1,171 +1,98 @@
 "use client";
 
-import { useCallback, useState, useEffect } from "react";
-import { useDebounce } from "use-debounce";
-import { Card } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import type { FilterParams } from "@/types/car";
+import { Label } from "@/components/ui/label";
 import { CarStatus } from "@prisma/client";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Filter, X } from "lucide-react";
 
 interface CarFiltersProps {
-  onFilterChange: (filters: FilterParams) => void;
+  onFilterChange: (filters: any) => void;
 }
 
-const TRANSMISSION_OPTIONS = [
-  { value: "Automatica", label: "Automática" },
-  { value: "Manual", label: "Manual" },
-];
-
 export function CarFilters({ onFilterChange }: CarFiltersProps) {
-  const [filters, setFilters] = useState<FilterParams>({});
-  const [debouncedCallback] = useDebounce(onFilterChange, 300);
   const [brands, setBrands] = useState<string[]>([]);
-  const [types, setTypes] = useState<string[]>([]);
   const [models, setModels] = useState<string[]>([]);
+  const [types, setTypes] = useState<string[]>([]);
+  const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
+  const [selectedModel, setSelectedModel] = useState<string | null>(null);
+  const [selectedType, setSelectedType] = useState<string | null>(null);
+  const [selectedStatus, setSelectedStatus] = useState<CarStatus | null>(null);
   const [minPrice, setMinPrice] = useState<string>("");
   const [maxPrice, setMaxPrice] = useState<string>("");
-  const [loading, setLoading] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
-  // Cargar marcas
   useEffect(() => {
-    const loadBrands = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch("/api/cars/brands");
-        if (response.ok) {
-          const data = await response.json();
-          setBrands(data);
-        }
-      } catch (error) {
-        console.error("Error al cargar marcas:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadBrands();
+    // Cargar marcas
+    fetch('/api/cars/brands')
+      .then(res => res.json())
+      .then(setBrands);
+
+    // Cargar tipos
+    fetch('/api/cars/types')
+      .then(res => res.json())
+      .then(setTypes);
   }, []);
 
-  // Cargar tipos
   useEffect(() => {
-    const loadTypes = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch("/api/cars/types");
-        if (response.ok) {
-          const data = await response.json();
-          setTypes(data);
-        }
-      } catch (error) {
-        console.error("Error al cargar tipos:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadTypes();
-  }, []);
+    if (selectedBrand) {
+      fetch('/api/cars/models', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ brand: selectedBrand })
+      })
+        .then(res => res.json())
+        .then(setModels);
+    } else {
+      setModels([]);
+      setSelectedModel(null);
+    }
+  }, [selectedBrand]);
 
-  // Cargar modelos cuando se selecciona una marca
-  useEffect(() => {
-    const loadModels = async () => {
-      if (!filters.brand) {
-        setModels([]);
-        return;
-      }
-      try {
-        setLoading(true);
-        const response = await fetch("/api/cars/models", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ brand: filters.brand }),
-        });
-        if (response.ok) {
-          const data = await response.json();
-          setModels(data);
-        }
-      } catch (error) {
-        console.error("Error al cargar modelos:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadModels();
-  }, [filters.brand]);
-
-  const handleFilterChange = useCallback(
-    (newFilters: Partial<FilterParams>) => {
-      const updatedFilters = { ...filters, ...newFilters };
-      setFilters(updatedFilters);
-      debouncedCallback(updatedFilters);
-    },
-    [filters, debouncedCallback]
-  );
-
-  const handlePriceChange = () => {
-    handleFilterChange({
+  const handleFilter = () => {
+    const filters = {
+      brand: selectedBrand || undefined,
+      model: selectedModel || undefined,
+      type: selectedType || undefined,
+      status: selectedStatus || undefined,
       minPrice: minPrice ? parseFloat(minPrice) : undefined,
       maxPrice: maxPrice ? parseFloat(maxPrice) : undefined,
-    });
+    };
+    onFilterChange(filters);
+    setIsOpen(false);
   };
 
-  const handleReset = () => {
-    setFilters({});
+  const clearFilters = () => {
+    setSelectedBrand(null);
+    setSelectedModel(null);
+    setSelectedType(null);
+    setSelectedStatus(null);
     setMinPrice("");
     setMaxPrice("");
-    debouncedCallback({});
+    onFilterChange({});
+    setIsOpen(false);
   };
 
-  return (
-    <Card className="p-6">
-      <div className="space-y-6">
-        <div>
-          <h2 className="text-lg font-semibold mb-4">Filtros</h2>
-          <Separator className="mb-6" />
-        </div>
-
-        {/* Estado */}
-        <div className="space-y-2">
-          <Label>Estado</Label>
-          <Select
-            value={filters.status}
-            onValueChange={(value: CarStatus) =>
-              handleFilterChange({ status: value })
-            }
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Todos" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value={CarStatus.NEW}>Nuevo</SelectItem>
-              <SelectItem value={CarStatus.USED}>Usado</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
+  const FilterForm = () => (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Marca */}
         <div className="space-y-2">
-          <Label>Marca</Label>
-          <Select
-            value={filters.brand}
-            onValueChange={(value) => handleFilterChange({ brand: value })}
-            disabled={loading}
+          <Label htmlFor="brand">Marca</Label>
+          <Select 
+            value={selectedBrand || undefined} 
+            onValueChange={setSelectedBrand}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Todas" />
+              <SelectValue placeholder="Seleccionar marca" />
             </SelectTrigger>
             <SelectContent>
-              {brands.map((brand) => (
-                <SelectItem key={brand} value={brand}>
-                  {brand}
-                </SelectItem>
+              <SelectItem value="all">Todas las marcas</SelectItem>
+              {brands.map(brand => (
+                <SelectItem key={brand} value={brand}>{brand}</SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -173,22 +100,19 @@ export function CarFilters({ onFilterChange }: CarFiltersProps) {
 
         {/* Modelo */}
         <div className="space-y-2">
-          <Label>Modelo</Label>
-          <Select
-            value={filters.model}
-            onValueChange={(value) => handleFilterChange({ model: value })}
-            disabled={!filters.brand || loading}
+          <Label htmlFor="model">Modelo</Label>
+          <Select 
+            value={selectedModel || undefined} 
+            onValueChange={setSelectedModel} 
+            disabled={!selectedBrand}
           >
             <SelectTrigger>
-              <SelectValue 
-                placeholder={filters.brand ? "Todos los modelos" : "Selecciona una marca"} 
-              />
+              <SelectValue placeholder="Seleccionar modelo" />
             </SelectTrigger>
             <SelectContent>
-              {models.map((model) => (
-                <SelectItem key={model} value={model}>
-                  {model}
-                </SelectItem>
+              <SelectItem value="all">Todos los modelos</SelectItem>
+              {models.map(model => (
+                <SelectItem key={model} value={model}>{model}</SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -196,77 +120,105 @@ export function CarFilters({ onFilterChange }: CarFiltersProps) {
 
         {/* Tipo */}
         <div className="space-y-2">
-          <Label>Tipo</Label>
-          <Select
-            value={filters.type}
-            onValueChange={(value) => handleFilterChange({ type: value })}
+          <Label htmlFor="type">Tipo</Label>
+          <Select 
+            value={selectedType || undefined} 
+            onValueChange={setSelectedType}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Todos" />
+              <SelectValue placeholder="Seleccionar tipo" />
             </SelectTrigger>
             <SelectContent>
-              {types.map((type) => (
-                <SelectItem key={type} value={type}>
-                  {type}
-                </SelectItem>
+              <SelectItem value="all">Todos los tipos</SelectItem>
+              {types.map(type => (
+                <SelectItem key={type} value={type}>{type}</SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
 
-        {/* Transmisión */}
+        {/* Estado */}
         <div className="space-y-2">
-          <Label>Transmisión</Label>
-          <Select
-            value={filters.transmission}
-            onValueChange={(value) => handleFilterChange({ transmission: value })}
+          <Label htmlFor="status">Estado</Label>
+          <Select 
+            value={selectedStatus || undefined} 
+            onValueChange={(value) => setSelectedStatus(value as CarStatus)}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Todas" />
+              <SelectValue placeholder="Seleccionar estado" />
             </SelectTrigger>
             <SelectContent>
-              {TRANSMISSION_OPTIONS.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
+              <SelectItem value="all">Todos los estados</SelectItem>
+              <SelectItem value={CarStatus.NEW}>Nuevo</SelectItem>
+              <SelectItem value={CarStatus.USED}>Usado</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
-        {/* Rango de Precio */}
+        {/* Precio Mínimo */}
         <div className="space-y-2">
-          <Label>Rango de Precio (USD)</Label>
-          <div className="flex gap-2">
-            <Input
-              type="number"
-              value={minPrice}
-              onChange={(e) => setMinPrice(e.target.value)}
-              onBlur={handlePriceChange}
-              placeholder="Precio mín"
-              min={0}
-            />
-            <Input
-              type="number"
-              value={maxPrice}
-              onChange={(e) => setMaxPrice(e.target.value)}
-              onBlur={handlePriceChange}
-              placeholder="Precio máx"
-              min={0}
-            />
-          </div>
+          <Label htmlFor="minPrice">Precio Mínimo</Label>
+          <Input
+            type="number"
+            id="minPrice"
+            placeholder="Precio mínimo"
+            value={minPrice}
+            onChange={(e) => setMinPrice(e.target.value)}
+          />
         </div>
 
-        <Separator />
-
-        {/* Botón de reset */}
-        <button
-          onClick={handleReset}
-          className="w-full py-2 text-sm text-muted-foreground hover:text-primary transition-colors"
-        >
-          Limpiar filtros
-        </button>
+        {/* Precio Máximo */}
+        <div className="space-y-2">
+          <Label htmlFor="maxPrice">Precio Máximo</Label>
+          <Input
+            type="number"
+            id="maxPrice"
+            placeholder="Precio máximo"
+            value={maxPrice}
+            onChange={(e) => setMaxPrice(e.target.value)}
+          />
+        </div>
       </div>
-    </Card>
+
+      <div className="flex gap-2">
+        <Button onClick={handleFilter} className="flex-1">Aplicar Filtros</Button>
+        <Button variant="outline" onClick={clearFilters} className="flex gap-2">
+          <X className="h-4 w-4" />
+          Limpiar
+        </Button>
+      </div>
+    </div>
+  );
+
+  return (
+    <>
+      {/* Versión Desktop */}
+      <div className="hidden md:block bg-white p-6 rounded-lg border">
+        <FilterForm />
+      </div>
+
+      {/* Versión Mobile */}
+      <div className="md:hidden">
+        <Sheet open={isOpen} onOpenChange={setIsOpen}>
+          <SheetTrigger asChild>
+            <Button variant="outline" className="w-full flex gap-2">
+              <Filter className="h-4 w-4" />
+              Filtrar Vehículos
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="bottom" className="h-[85vh]">
+            <SheetHeader>
+              <SheetTitle>Filtros</SheetTitle>
+              <SheetDescription>
+                Ajusta los filtros para encontrar el vehículo que buscas
+              </SheetDescription>
+            </SheetHeader>
+            <div className="mt-6">
+              <FilterForm />
+            </div>
+          </SheetContent>
+        </Sheet>
+      </div>
+    </>
   );
 }
