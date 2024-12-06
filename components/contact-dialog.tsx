@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -20,16 +20,26 @@ interface ContactDialogProps {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   defaultMessage?: string;
+  triggerButton?: boolean;
 }
 
-export function ContactDialog({ open, onOpenChange, defaultMessage }: ContactDialogProps) {
+export function ContactDialog({ 
+  open, 
+  onOpenChange, 
+  defaultMessage = "", 
+  triggerButton = true 
+}: ContactDialogProps) {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    message: defaultMessage || "",
+    message: "",
   });
+
+  useEffect(() => {
+    setFormData(prev => ({ ...prev, message: defaultMessage }));
+  }, [defaultMessage]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,20 +82,9 @@ export function ContactDialog({ open, onOpenChange, defaultMessage }: ContactDia
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const DialogWrapper = ({ children }: { children: React.ReactNode }) => {
-    if (open !== undefined && onOpenChange) {
-      return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
-          {children}
-        </Dialog>
-      );
-    }
-    return <Dialog>{children}</Dialog>;
-  };
-
   return (
-    <DialogWrapper>
-      {!open && (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      {triggerButton && (
         <DialogTrigger asChild>
           <Button variant="outline" className="w-full">
             <MessageCircle className="mr-2 h-4 w-4" />
@@ -140,6 +139,6 @@ export function ContactDialog({ open, onOpenChange, defaultMessage }: ContactDia
           </Button>
         </form>
       </DialogContent>
-    </DialogWrapper>
+    </Dialog>
   );
 }

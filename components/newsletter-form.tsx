@@ -37,7 +37,6 @@ export function NewsletterForm() {
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold">Mantente actualizado</h3>
       <p className="text-sm text-muted-foreground">
         Suscríbete para recibir novedades sobre nuevos vehículos en venta y ofertas
         especiales.
