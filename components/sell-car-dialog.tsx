@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Textarea } from "@/components/ui/textarea";
+import { buildSellCarWhatsAppMessage, openWhatsApp } from "@/lib/whatsapp-utils";
 
 export function SellCarDialog() {
   const [open, setOpen] = useState(false);
@@ -42,18 +43,17 @@ export function SellCarDialog() {
     setLoading(true);
     
     try {
-      const response = await fetch("/api/sell_request", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      if (!response.ok) throw new Error("Error al enviar");
+      // Construir mensaje de WhatsApp
+      const message = buildSellCarWhatsAppMessage(formData);
+      
+      // Abrir WhatsApp
+      await openWhatsApp(message);
 
       toast({
-        title: "¡Éxito!",
-        description: "Tu solicitud de venta se ha enviado correctamente. Pronto te contactaremos.",
+        title: "¡Redirigiendo a WhatsApp!",
+        description: "Te estamos redirigiendo a WhatsApp para completar tu consulta.",
       });
+      
       setOpen(false);
       setFormData({
         name: "",
@@ -70,7 +70,7 @@ export function SellCarDialog() {
     } catch (error) {
       toast({
         title: "Error",
-        description: "No se pudo publicar tu auto. Intenta nuevamente.",
+        description: "No se pudo abrir WhatsApp. Por favor, intenta nuevamente.",
         variant: "destructive",
       });
     } finally {

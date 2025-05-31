@@ -92,6 +92,11 @@ export default function CarDetailPage({ params }: { params: { id: string } }) {
     return `Hola, estoy interesado en el ${car.brand} ${car.model} ${car.year} (ID: ${car.id})`;
   }, [car]);
 
+  const carInfo = useMemo(() => {
+    if (!car) return "";
+    return `${car.brand} ${car.model} ${car.year} (ID: ${car.id}) - USD ${formatPrice(car.price)}`;
+  }, [car]);
+
   if (loading) {
     return (
       <div className="min-h-screen pt-16 flex items-center justify-center">
@@ -303,6 +308,7 @@ export default function CarDetailPage({ params }: { params: { id: string } }) {
         open={isContactOpen}
         onOpenChange={setIsContactOpen}
         defaultMessage={contactMessage}
+        carInfo={carInfo}
         triggerButton={false}
       />
     </main>

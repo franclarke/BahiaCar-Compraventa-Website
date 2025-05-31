@@ -15,19 +15,22 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { MessageCircle, Loader2 } from "lucide-react";
+import { buildContactWhatsAppMessage, buildInterestWhatsAppMessage, openWhatsApp } from "@/lib/whatsapp-utils";
 
 interface ContactDialogProps {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   defaultMessage?: string;
   triggerButton?: boolean;
+  carInfo?: string; // Información del auto para formulario de interés
 }
 
 export function ContactDialog({ 
   open, 
   onOpenChange, 
   defaultMessage = "", 
-  triggerButton = true 
+  triggerButton = true,
+  carInfo
 }: ContactDialogProps) {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
@@ -46,29 +49,26 @@ export function ContactDialog({
     setLoading(true);
 
     try {
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+      // Construir mensaje de WhatsApp apropiado
+      const message = carInfo 
+        ? buildInterestWhatsAppMessage(formData, carInfo)
+        : buildContactWhatsAppMessage(formData);
+      
+      // Abrir WhatsApp
+      await openWhatsApp(message);
 
-      if (response.ok) {
-        toast({
-          title: "Mensaje enviado",
-          description: "Nos pondremos en contacto contigo pronto.",
-        });
-        setFormData({ name: "", email: "", message: "" });
-        if (onOpenChange) onOpenChange(false);
-      } else {
-        throw new Error("Error al enviar el mensaje");
-      }
+      toast({
+        title: "¡Redirigiendo a WhatsApp!",
+        description: "Te estamos redirigiendo a WhatsApp para completar tu consulta.",
+      });
+      
+      setFormData({ name: "", email: "", message: "" });
+      if (onOpenChange) onOpenChange(false);
     } catch (error) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: "No se pudo enviar el mensaje. Por favor, intenta nuevamente.",
+        description: "No se pudo abrir WhatsApp. Por favor, intenta nuevamente.",
       });
     } finally {
       setLoading(false);

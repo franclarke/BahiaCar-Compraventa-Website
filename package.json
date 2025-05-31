@@ -17,7 +17,8 @@
     "postinstall": "prisma generate",
     "create-admin": "npx tsx scripts/create-admin.ts",
     "performance:audit": "lighthouse http://localhost:3000 --output=json --output-path=./lighthouse-report.json",
-    "bundle:analyze": "npx @next/bundle-analyzer"
+    "bundle:analyze": "npx @next/bundle-analyzer",
+    "generate:favicons": "node scripts/generate-favicons.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
