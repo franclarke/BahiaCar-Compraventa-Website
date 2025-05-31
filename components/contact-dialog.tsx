@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, Loader2 } from "lucide-react";
 
 interface ContactDialogProps {
   open?: boolean;
@@ -86,56 +86,95 @@ export function ContactDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       {triggerButton && (
         <DialogTrigger asChild>
-          <Button variant="outline" className="w-full">
-            <MessageCircle className="mr-2 h-4 w-4" />
+          <Button 
+            variant="outline" 
+            className="w-full min-h-[44px]"
+            aria-label="Abrir formulario de contacto"
+          >
+            <MessageCircle className="mr-2 h-4 w-4" aria-hidden="true" />
             Consultanos Ahora
           </Button>
         </DialogTrigger>
       )}
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent 
+        className="sm:max-w-[425px]"
+        aria-describedby="contact-form-description"
+      >
         <DialogHeader>
           <DialogTitle>Contactanos</DialogTitle>
-          <DialogDescription>
+          <DialogDescription id="contact-form-description">
             Envíanos tu consulta y te responderemos a la brevedad.
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form 
+          onSubmit={handleSubmit} 
+          className="space-y-4"
+          aria-label="Formulario de contacto"
+        >
           <div className="space-y-2">
-            <Label htmlFor="name">Nombre</Label>
+            <Label htmlFor="contact-name">Nombre</Label>
             <Input
-              id="name"
+              id="contact-name"
               name="name"
               placeholder="Tu nombre"
               value={formData.name}
               onChange={handleChange}
+              disabled={loading}
               required
+              aria-describedby="name-help"
             />
+            <span id="name-help" className="sr-only">
+              Ingresa tu nombre completo
+            </span>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="contact-email">Email</Label>
             <Input
-              id="email"
+              id="contact-email"
               name="email"
               type="email"
               placeholder="tu@email.com"
               value={formData.email}
               onChange={handleChange}
+              disabled={loading}
               required
+              aria-describedby="email-help"
             />
+            <span id="email-help" className="sr-only">
+              Ingresa tu correo electrónico para que podamos responderte
+            </span>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="message">Mensaje</Label>
+            <Label htmlFor="contact-message">Mensaje</Label>
             <Textarea
-              id="message"
+              id="contact-message"
               name="message"
               placeholder="Tu mensaje..."
               value={formData.message}
               onChange={handleChange}
+              disabled={loading}
               required
+              className="min-h-[100px]"
+              aria-describedby="message-help"
             />
+            <span id="message-help" className="sr-only">
+              Describe tu consulta o lo que necesites
+            </span>
           </div>
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "Enviando..." : "Enviar mensaje"}
+          <Button 
+            type="submit" 
+            className="w-full min-h-[44px]" 
+            disabled={loading}
+            aria-label={loading ? "Enviando mensaje" : "Enviar mensaje de contacto"}
+          >
+            {loading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
+                Enviando...
+              </>
+            ) : (
+              "Enviar mensaje"
+            )}
           </Button>
         </form>
       </DialogContent>

@@ -5,15 +5,19 @@
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build",
+    "build:optimized": "node scripts/build-optimization.js",
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
     "type-check": "tsc --noEmit",
     "build:production": "npm run lint && npm run type-check && npm run build",
+    "build:analyze": "ANALYZE=true npm run build",
     "start:production": "node scripts/start-production.js",
     "seed": "npx tsx prisma/seed.ts",
     "postinstall": "prisma generate",
-    "create-admin": "npx tsx scripts/create-admin.ts"
+    "create-admin": "npx tsx scripts/create-admin.ts",
+    "performance:audit": "lighthouse http://localhost:3000 --output=json --output-path=./lighthouse-report.json",
+    "bundle:analyze": "npx @next/bundle-analyzer"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
