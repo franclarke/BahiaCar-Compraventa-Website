@@ -88,7 +88,7 @@ export function ContactDialog({
         <DialogTrigger asChild>
           <Button variant="outline" className="w-full">
             <MessageCircle className="mr-2 h-4 w-4" />
-            Contactar
+            Consultanos Ahora
           </Button>
         </DialogTrigger>
       )}

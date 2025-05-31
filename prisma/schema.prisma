@@ -45,6 +45,7 @@ model Car {
   fuelType    String
   images      String[]
   description String
+  vendido     Boolean  @default(false)
   createdAt   DateTime @default(now())
 }
 

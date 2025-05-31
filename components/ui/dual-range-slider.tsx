@@ -20,7 +20,7 @@ const Slider = React.forwardRef<
 >(({ className, showTooltip = false, tooltipContent, ...props }, ref) => {
   const [showTooltipState, setShowTooltipState] = React.useState(false);
   const [internalValue, setInternalValue] = React.useState<number[]>(
-    (props.defaultValue as number[]) ?? (props.value as number[]) ?? [0],
+    (props.defaultValue as number[]) ?? (props.value as number[]) ?? [0, 83000],
   );
 
   React.useEffect(() => {
@@ -102,4 +102,4 @@ const Slider = React.forwardRef<
 });
 Slider.displayName = SliderPrimitive.Root.displayName;
 
-export { Slider };
+export { Slider }; 

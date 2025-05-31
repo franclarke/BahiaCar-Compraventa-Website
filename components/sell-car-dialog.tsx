@@ -78,7 +78,7 @@ export function SellCarDialog() {
       <DialogTrigger asChild>
         <Button size="lg" className="w-full">
           <Car className="mr-2 h-5 w-5" />
-          Vender mi auto
+          Publicá Tu Auto Hoy
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">

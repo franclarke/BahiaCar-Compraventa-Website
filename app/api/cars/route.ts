@@ -8,8 +8,14 @@ interface FilterParams {
   brand?: string;
   model?: string;
   transmission?: string;
+  fuelType?: string;
   minPrice?: number;
   maxPrice?: number;
+  minMileage?: number;
+  maxMileage?: number;
+  minYear?: number;
+  maxYear?: number;
+  vendido?: boolean;
 }
 
 export async function POST(req: Request) {
@@ -26,22 +32,34 @@ export async function POST(req: Request) {
     if (body.brand) filters.brand = body.brand;
     if (body.model) filters.model = body.model;
     if (body.transmission) filters.transmission = body.transmission;
+    if (body.fuelType) filters.fuelType = body.fuelType;
+    if (typeof body.vendido === 'boolean') filters.vendido = body.vendido;
 
-    // Consulta a la base de datos
+    // Consulta a la base de datos con filtros adicionales
     const cars = await prisma.car.findMany({
-      where: filters,
+      where: {
+        ...filters,
+        ...(body.minYear || body.maxYear ? {
+          year: {
+            gte: body.minYear,
+            lte: body.maxYear,
+          }
+        } : {}),
+        ...(body.minMileage || body.maxMileage ? {
+          mileage: {
+            gte: body.minMileage,
+            lte: body.maxMileage,
+          }
+        } : {}),
+        ...(body.minPrice || body.maxPrice ? {
+          price: {
+            gte: body.minPrice,
+            lte: body.maxPrice,
+          }
+        } : {}),
+      },
       orderBy: { createdAt: 'desc' }
     });
-
-    // Filtrado de precios si es necesario
-    if (body.minPrice || body.maxPrice) {
-      return NextResponse.json(cars.filter(car => {
-        const price = car.price;
-        const minOk = !body.minPrice || price >= body.minPrice;
-        const maxOk = !body.maxPrice || price <= body.maxPrice;
-        return minOk && maxOk;
-      }));
-    }
 
     return NextResponse.json(cars);
   } catch (error) {

@@ -37,9 +37,8 @@ export function NewsletterForm() {
 
   return (
     <div className="space-y-4">
-      <p className="text-sm text-muted-foreground">
-        Suscríbete para recibir novedades sobre nuevos vehículos en venta y ofertas
-        especiales.
+      <p className="text-m text-muted-foreground">
+      ¡No te pierdas las mejores ofertas! Suscribite y recibí novedades sobre autos y promociones exclusivas.
       </p>
       <form onSubmit={handleSubmit} className="flex gap-2">
         <Input
