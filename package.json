@@ -10,6 +10,7 @@
     "lint:fix": "next lint --fix",
     "type-check": "tsc --noEmit",
     "build:production": "npm run lint && npm run type-check && npm run build",
+    "start:production": "node scripts/start-production.js",
     "seed": "npx tsx prisma/seed.ts",
     "postinstall": "prisma generate",
     "create-admin": "npx tsx scripts/create-admin.ts"

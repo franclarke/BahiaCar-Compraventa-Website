@@ -154,7 +154,7 @@ export default function CarManagement() {
 
   useEffect(() => {
     fetchCars()
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   if (isLoading) {
     return (
