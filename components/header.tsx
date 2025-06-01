@@ -13,11 +13,11 @@ export function Header() {
       className="fixed w-full h-16 bg-white/95 backdrop-blur-sm z-50 border-b shadow-sm"
       role="banner"
     >
-      <div className="container mx-auto h-full px-4 lg:px-6 flex items-center justify-between">
+      <div className="container mx-auto h-full px-3 sm:px-4 lg:px-6 flex items-center justify-between">
         {/* Logo y nombre */}
         <Link 
           href="/"
-          className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
+          className="flex items-center space-x-2 sm:space-x-3 hover:opacity-80 transition-opacity"
           aria-label="BahiaCar - Ir a página principal"
         >
           <Image
@@ -25,10 +25,10 @@ export function Header() {
             alt="BahiaCar Logo"
             width={32}
             height={32}
-            className="w-8 h-8 sm:w-10 sm:h-10"
+            className="w-7 h-7 sm:w-10 sm:h-10"
             priority
           />
-          <span className="text-lg sm:text-xl font-bold text-gray-900">BahiaCar</span>
+          <span className="text-base sm:text-xl font-bold text-gray-900">BahiaCar</span>
         </Link>
         
         {/* Navegación Desktop */}
@@ -60,7 +60,7 @@ export function Header() {
 
         {/* Navegación Mobile */}
         <nav 
-          className="flex md:hidden items-center gap-2"
+          className="flex md:hidden items-center gap-1"
           role="navigation"
           aria-label="Navegación móvil"
         >
@@ -68,7 +68,7 @@ export function Header() {
             <Button 
               variant="ghost" 
               size="sm"
-              className="font-medium text-sm px-3"
+              className="font-medium text-xs px-2 h-8"
               aria-label="Ver catálogo de vehículos"
             >
               Catálogo
@@ -77,12 +77,12 @@ export function Header() {
           
           <SellCarDialog 
             triggerText="Vender" 
-            triggerClassName="text-sm px-3 font-medium"
+            triggerClassName="text-xs px-2 h-8 font-medium hover:bg-blue-50 hover:text-blue-700"
           />
           
           <ContactDialog 
             triggerText="Contacto" 
-            triggerClassName="bg-primary text-white hover:bg-primary/90 text-sm px-3 font-medium"
+            triggerClassName="bg-primary text-white hover:bg-primary/90 text-xs px-2 h-8 font-medium"
           />
         </nav>
       </div>
