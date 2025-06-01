@@ -1,12 +1,18 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
+    // Solo usar custom loader en producción para Netlify
+    ...(process.env.NODE_ENV === 'production' && {
+      loader: 'custom',
+      loaderFile: './lib/image-loader.js',
+    }),
     domains: [
       'cdn.motor1.com',
       'static.vecteezy.com',
       'http2.mlstatic.com',
       'fbcjdahxceizkiveteqh.supabase.co',
-      'maipuexclusivos.com.ar'
+      'maipuexclusivos.com.ar',
+      'bahiacarcompraventa.netlify.app'
     ],
     remotePatterns: [
       {
@@ -15,25 +21,36 @@ const nextConfig = {
         port: '',
         pathname: '/storage/v1/object/public/**',
       },
+      {
+        protocol: 'https',
+        hostname: '*.netlify.app',
+        port: '',
+        pathname: '/**',
+      },
     ],
     formats: ['image/webp', 'image/avif'],
     minimumCacheTTL: 31536000,
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
+  output: 'standalone',
   experimental: {
     serverComponentsExternalPackages: ['@supabase/supabase-js'],
     scrollRestoration: true,
-    // Deshabilitar optimización CSS crítico que causa problemas con critters en Netlify
-    optimizeCss: false,
+    // Optimizaciones para Netlify
+    optimizeCss: true,
+    serverMinification: false,
   },
-  swcMinify: false, // Temporalmente deshabilitado por problemas de unicode en Terser
-  compress: false, // Temporalmente deshabilitado por problemas de minificación
+  swcMinify: true,
+  compress: true,
   poweredByHeader: false,
   reactStrictMode: true,
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
+  // Configuración específica para Netlify
+  trailingSlash: false,
+  generateEtags: false,
   webpack: (config, { isServer, dev }) => {
     // Configuración para manejar las dependencias problemáticas
     config.resolve.fallback = {

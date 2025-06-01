@@ -4,6 +4,7 @@ import { Inter } from 'next/font/google';
 import { Toaster } from "@/components/ui/toaster";
 import { Header } from "@/components/header";
 import { setupCleanup } from '@/lib/server-cleanup';
+import { cn } from '@/lib/utils';
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -27,68 +28,49 @@ export const viewport = {
 };
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://bahiacarcompraventa.netlify.app'),
   title: {
-    default: 'BahiaCar - Compra y Venta de Autos y Camionetas en Bahía Blanca',
+    default: 'BahiaCar - Compra y Venta de Autos en Bahía Blanca',
     template: '%s | BahiaCar'
   },
-  description: 'La plataforma confiable en Bahía Blanca para comprar y vender autos y camionetas, nuevos y usados. Encuentra tu vehículo ideal o vende el tuyo de manera segura.',
+  description: 'La plataforma confiable en Bahía Blanca para comprar y vender autos y camionetas. Encuentra tu vehículo ideal o publica tu auto para vender.',
   keywords: [
-    'autos',
-    'camionetas', 
-    'Bahía Blanca',
-    'Buenos Aires',
-    'comprar autos',
-    'vender autos',
-    'autos usados',
-    'autos nuevos',
-    'Argentina',
+    'autos bahía blanca',
+    'venta autos',
+    'compra autos',
+    'camionetas',
+    'vehículos usados',
     'concesionaria',
-    'vehículos'
+    'bahía blanca'
   ],
   authors: [{ name: 'BahiaCar' }],
   creator: 'BahiaCar',
   publisher: 'BahiaCar',
-  metadataBase: new URL('https://bahiacar.com'),
-  alternates: {
-    canonical: '/',
-  },
-  manifest: '/manifest.json',
-  icons: {
-    icon: [
-      { url: '/favicon.ico', sizes: '32x32', type: 'image/x-icon' },
-      { url: '/logo.svg', type: 'image/svg+xml' },
-    ],
-    apple: [
-      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
-    ],
-    other: [
-      {
-        rel: 'mask-icon',
-        url: '/logo.svg',
-        color: '#0F172A',
-      },
-    ],
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
   },
   openGraph: {
     type: 'website',
     locale: 'es_AR',
-    url: 'https://bahiacar.com',
+    url: 'https://bahiacarcompraventa.netlify.app',
     siteName: 'BahiaCar',
     title: 'BahiaCar - Compra y Venta de Autos en Bahía Blanca',
-    description: 'Encuentra tu vehículo ideal en Bahía Blanca. Plataforma confiable para comprar y vender autos y camionetas.',
+    description: 'La plataforma confiable en Bahía Blanca para comprar y vender autos y camionetas.',
     images: [
       {
         url: '/logo.svg',
         width: 1200,
         height: 630,
-        alt: 'BahiaCar - Compra y Venta de Vehículos',
+        alt: 'BahiaCar Logo',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'BahiaCar - Compra y Venta de Autos en Bahía Blanca',
-    description: 'Encuentra tu vehículo ideal en Bahía Blanca. Plataforma confiable para comprar y vender autos y camionetas.',
+    title: 'BahiaCar - Compra y Venta de Autos',
+    description: 'La plataforma confiable en Bahía Blanca para comprar y vender autos y camionetas.',
     images: ['/logo.svg'],
   },
   robots: {
@@ -102,6 +84,27 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
+  manifest: '/manifest.json',
+  icons: {
+    icon: [
+      { url: '/favicon.ico' },
+      { url: '/favicon-16x16.svg', sizes: '16x16', type: 'image/svg+xml' },
+      { url: '/favicon-32x32.svg', sizes: '32x32', type: 'image/svg+xml' },
+    ],
+    apple: [
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
+    other: [
+      {
+        rel: 'mask-icon',
+        url: '/logo.svg',
+        color: '#0F172A',
+      },
+    ],
+  },
+  alternates: {
+    canonical: '/',
+  },
   applicationName: 'BahiaCar',
   appleWebApp: {
     capable: true,
@@ -114,9 +117,8 @@ export const metadata: Metadata = {
       },
     ],
   },
-  formatDetection: {
-    telephone: false,
-  },
+  msapplicationTileColor: '#0F172A',
+  msapplicationConfig: '/browserconfig.xml',
 };
 
 export default function RootLayout({
@@ -125,8 +127,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="es" className={inter.variable}>
+    <html lang="es" className={inter.variable} suppressHydrationWarning>
       <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+        <meta name="theme-color" content="#0F172A" />
+        <meta name="color-scheme" content="light dark" />
+        <link rel="preload" href="/logo.svg" as="image" type="image/svg+xml" />
         {/* Preconnect para recursos críticos */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
@@ -156,11 +162,21 @@ export default function RootLayout({
         <meta name="msapplication-TileColor" content="#0F172A" />
         <meta name="msapplication-config" content="/browserconfig.xml" />
       </head>
-      <body className={inter.className}>
-        <Header />
-        <main id="main-content" role="main">
-          {children}
-        </main>
+      <body 
+        className={cn(
+          inter.className,
+          'min-h-screen bg-background font-sans antialiased'
+        )}
+        suppressHydrationWarning
+      >
+        <div className="relative flex min-h-screen flex-col">
+          <div className="flex-1">
+            <Header />
+            <main id="main-content" role="main">
+              {children}
+            </main>
+          </div>
+        </div>
         <Toaster />
       </body>
     </html>
