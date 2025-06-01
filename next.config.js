@@ -23,11 +23,12 @@ const nextConfig = {
   },
   experimental: {
     serverComponentsExternalPackages: ['@supabase/supabase-js'],
-    optimizeCss: true,
     scrollRestoration: true,
+    // Deshabilitar optimización CSS crítico que causa problemas con critters en Netlify
+    optimizeCss: false,
   },
-  swcMinify: true,
-  compress: true,
+  swcMinify: false, // Temporalmente deshabilitado por problemas de unicode en Terser
+  compress: false, // Temporalmente deshabilitado por problemas de minificación
   poweredByHeader: false,
   reactStrictMode: true,
   compiler: {

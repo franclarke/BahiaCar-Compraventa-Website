@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -46,7 +46,7 @@ export default function MessageManagement() {
   });
   const { toast } = useToast();
 
-  const fetchMessages = async (status?: string, page = 1) => {
+  const fetchMessages = useCallback(async (status?: string, page = 1) => {
     try {
       setLoading(true);
       const url = new URL('/api/messages', window.location.origin);
@@ -73,7 +73,7 @@ export default function MessageManagement() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [toast]);
 
   const updateMessageStatus = async (id: number, status: 'UNREAD' | 'READ') => {
     try {
@@ -137,7 +137,7 @@ export default function MessageManagement() {
 
   useEffect(() => {
     fetchMessages(activeTab, currentPage);
-  }, [activeTab, currentPage]);
+  }, [activeTab, currentPage, fetchMessages]);
 
   const getStatusBadge = (status: string) => {
     return status === 'UNREAD' ? (
