@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { CarStatus } from "@prisma/client";
+import { handleApiError, validateDatabaseConnection } from "@/lib/api-error-handler";
 
 interface FilterParams {
   status?: CarStatus;
@@ -20,6 +21,9 @@ interface FilterParams {
 
 export async function POST(req: Request) {
   try {
+    // Validar conexión a la base de datos
+    validateDatabaseConnection();
+    
     const body = await req.json() as FilterParams;
 
     // Construcción de los filtros básicos
@@ -63,19 +67,20 @@ export async function POST(req: Request) {
 
     return NextResponse.json(cars);
   } catch (error) {
-    console.error(error);
-    return NextResponse.json({ error: "Error al cargar los datos" }, { status: 500 });
+    return handleApiError(error);
   }
 }
 
 export async function GET() {
   try {
+    // Validar conexión a la base de datos
+    validateDatabaseConnection();
+    
     const cars = await prisma.car.findMany({
       orderBy: { createdAt: 'desc' }
     });
     return NextResponse.json(cars);
   } catch (error) {
-    console.error(error);
-    return NextResponse.json({ error: "Error al cargar los datos" }, { status: 500 });
+    return handleApiError(error);
   }
 }

@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
-
-const prisma = new PrismaClient()
+import { prisma } from '@/lib/prisma'
+import { handleApiError, validateDatabaseConnection } from '@/lib/api-error-handler'
 
 export async function GET(req: NextRequest) {
   try {
+    // Validar conexión a la base de datos
+    validateDatabaseConnection();
+    
     const url = new URL(req.url)
     const status = url.searchParams.get('status')
     const page = parseInt(url.searchParams.get('page') || '1')
@@ -34,7 +36,6 @@ export async function GET(req: NextRequest) {
       }
     }, { status: 200 })
   } catch (error: any) {
-    console.error('Error al obtener mensajes:', error)
-    return NextResponse.json({ error: 'Error al obtener mensajes' }, { status: 500 })
+    return handleApiError(error)
   }
 } 
