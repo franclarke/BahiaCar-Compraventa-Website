@@ -3,6 +3,8 @@ import { prisma } from '@/lib/prisma'
 import { verifyToken } from '@/lib/auth'
 import { uploadMultipleCarImages, deleteMultipleCarImages } from '@/lib/storage'
 
+export const dynamic = 'force-dynamic'
+
 // Verificar autenticación
 async function verifyAuth(request) {
   const cookieHeader = request.headers.get('cookie')

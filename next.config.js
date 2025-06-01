@@ -97,6 +97,22 @@ const nextConfig = {
   },
   
   webpack: (config, { dev, isServer }) => {
+    // Configurar fallbacks y externals para módulos problemáticos
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      fs: false,
+      net: false,
+      tls: false,
+      child_process: false,
+    }
+
+    // Ignorar módulos opcionales de WebSocket
+    config.externals = config.externals || []
+    config.externals.push({
+      'bufferutil': 'bufferutil',
+      'utf-8-validate': 'utf-8-validate',
+    })
+
     // Optimizaciones para producción
     if (!dev && !isServer) {
       config.optimization.splitChunks.cacheGroups = {
@@ -106,7 +122,7 @@ const nextConfig = {
           name: 'vendors',
           chunks: 'all',
         },
-      };
+      }
     }
 
     return config;
