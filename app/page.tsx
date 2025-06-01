@@ -45,8 +45,14 @@ export default function Home() {
             </span>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-              <SellCarDialog />
-              <ContactDialog />
+              <SellCarDialog 
+                triggerClassName="w-full text-base sm:text-lg py-4 sm:py-6 min-h-[44px]"
+                triggerText="Publicá Tu Auto Hoy"
+              />
+              <ContactDialog 
+                triggerClassName="w-full text-base sm:text-lg py-4 sm:py-6 min-h-[44px] border-primary text-primary hover:bg-primary hover:text-white"
+                triggerText="Consultanos Ahora"
+              />
             </div>
           </nav>
 

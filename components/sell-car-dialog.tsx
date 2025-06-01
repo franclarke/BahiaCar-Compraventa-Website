@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -16,7 +17,17 @@ import { useToast } from "@/hooks/use-toast";
 import { Textarea } from "@/components/ui/textarea";
 import { buildSellCarWhatsAppMessage, openWhatsApp } from "@/lib/whatsapp-utils";
 
-export function SellCarDialog() {
+interface SellCarDialogProps {
+  triggerClassName?: string;
+  triggerText?: string;
+  onDialogOpenChange?: (open: boolean) => void;
+}
+
+export function SellCarDialog({ 
+  triggerClassName,
+  triggerText = "Publicá Tu Auto Hoy",
+  onDialogOpenChange
+}: SellCarDialogProps = {}) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
@@ -43,6 +54,28 @@ export function SellCarDialog() {
     setLoading(true);
     
     try {
+      // Guardar solicitud de venta en la base de datos
+      const saveResponse = await fetch('/api/sell_request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.name,
+          phone: formData.phone,
+          email: formData.email,
+          brand: formData.brand,
+          model: formData.model,
+          year: formData.year,
+          condition: formData.condition,
+          mileage: formData.mileage,
+          price: formData.price,
+          description: formData.description
+        })
+      });
+
+      if (!saveResponse.ok) {
+        console.warn('No se pudo guardar la solicitud de venta en la base de datos');
+      }
+
       // Construir mensaje de WhatsApp
       const message = buildSellCarWhatsAppMessage(formData);
       
@@ -79,26 +112,28 @@ export function SellCarDialog() {
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={(newOpen) => {
+        setOpen(newOpen);
+        onDialogOpenChange?.(newOpen);
+      }}>
       <DialogTrigger asChild>
         <Button 
-          size="lg" 
-          className="w-full min-h-[44px]"
+          variant={triggerClassName ? "default" : "ghost"}
+          className={triggerClassName || "w-full justify-start text-base sm:text-lg font-semibold h-12 min-h-[44px]"}
           aria-label="Abrir formulario para vender tu vehículo"
         >
           <Car className="mr-2 h-5 w-5" aria-hidden="true" />
-          Publicá Tu Auto Hoy
+          {triggerText}
         </Button>
       </DialogTrigger>
       <DialogContent 
         className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto"
-        aria-describedby="sell-form-description"
       >
         <DialogHeader>
           <DialogTitle>Vender mi auto</DialogTitle>
-          <p id="sell-form-description" className="text-sm text-muted-foreground mt-2">
+          <DialogDescription>
             Completa este formulario para que podamos evaluar tu vehículo y contactarte con una oferta
-          </p>
+          </DialogDescription>
         </DialogHeader>
         <form 
           onSubmit={handleSubmit} 

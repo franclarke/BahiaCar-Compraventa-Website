@@ -5,8 +5,15 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { ContactDialog } from "@/components/contact-dialog";
+import { SellCarDialog } from "@/components/sell-car-dialog";
+import { useState } from "react";
 
 export function Header() {
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+
+  const closeSheet = () => setIsSheetOpen(false);
+
   return (
     <header 
       className="fixed w-full h-14 sm:h-16 bg-white/80 backdrop-blur-sm z-50 border-b"
@@ -63,7 +70,7 @@ export function Header() {
         </nav>
 
         {/* Menú Móvil */}
-        <Sheet>
+        <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
           <SheetTrigger asChild className="lg:hidden">
             <Button 
               variant="ghost" 
@@ -85,7 +92,7 @@ export function Header() {
               aria-label="Navegación móvil"
             >
               <h2 className="sr-only">Navegación del sitio</h2>
-              <Link href="/catalogo">
+              <Link href="/catalogo" onClick={closeSheet}>
                 <Button 
                   variant="ghost" 
                   className="w-full justify-start text-base sm:text-lg font-semibold h-12 min-h-[44px]"
@@ -94,24 +101,22 @@ export function Header() {
                   Catálogo
                 </Button>
               </Link>
-              <Link href="/vender">
-                <Button 
-                  variant="ghost" 
-                  className="w-full justify-start text-base sm:text-lg font-semibold h-12 min-h-[44px]"
-                  aria-label="Publicar tu vehículo en venta"
-                >
-                  Publicá tu vehículo
-                </Button>
-              </Link>
-              <Link href="/contacto">
-                <Button 
-                  variant="ghost" 
-                  className="w-full justify-start text-base sm:text-lg font-semibold h-12 min-h-[44px]"
-                  aria-label="Información de contacto"
-                >
-                  Contacto
-                </Button>
-              </Link>
+              <SellCarDialog 
+                triggerText="Publicá tu vehículo" 
+                onDialogOpenChange={(open) => {
+                  if (open) {
+                    closeSheet();
+                  }
+                }}
+              />
+              <ContactDialog 
+                triggerText="Contacto" 
+                onDialogOpenChange={(open) => {
+                  if (open) {
+                    closeSheet();
+                  }
+                }}
+              />
             </nav>
           </SheetContent>
         </Sheet>

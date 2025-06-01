@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import { verifyToken } from '@/lib/auth'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { LogOut, Car, Home, Menu, X } from 'lucide-react'
+import { LogOut, Car, Home, Menu, X, Mail } from 'lucide-react'
 import LogoutButton from '@/components/logout-button'
 
 async function verifyAuth() {

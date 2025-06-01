@@ -23,6 +23,9 @@ interface ContactDialogProps {
   defaultMessage?: string;
   triggerButton?: boolean;
   carInfo?: string; // Información del auto para formulario de interés
+  triggerClassName?: string;
+  triggerText?: string;
+  onDialogOpenChange?: (open: boolean) => void;
 }
 
 export function ContactDialog({ 
@@ -30,7 +33,10 @@ export function ContactDialog({
   onOpenChange, 
   defaultMessage = "", 
   triggerButton = true,
-  carInfo
+  carInfo,
+  triggerClassName,
+  triggerText = "Contacto",
+  onDialogOpenChange
 }: ContactDialogProps) {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
@@ -49,13 +55,32 @@ export function ContactDialog({
     setLoading(true);
 
     try {
+      // Guardar mensaje en la base de datos
+      const messageToSave = carInfo 
+        ? `${formData.message}\n\nAuto consultado: ${carInfo}`
+        : formData.message;
+
+      const saveResponse = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          message: messageToSave
+        })
+      });
+
+      if (!saveResponse.ok) {
+        console.warn('No se pudo guardar el mensaje en la base de datos');
+      }
+
       // Construir mensaje de WhatsApp apropiado
-      const message = carInfo 
+      const whatsappMessage = carInfo 
         ? buildInterestWhatsAppMessage(formData, carInfo)
         : buildContactWhatsAppMessage(formData);
       
       // Abrir WhatsApp
-      await openWhatsApp(message);
+      await openWhatsApp(whatsappMessage);
 
       toast({
         title: "¡Redirigiendo a WhatsApp!",
@@ -83,16 +108,19 @@ export function ContactDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={(newOpen) => {
+        onOpenChange?.(newOpen);
+        onDialogOpenChange?.(newOpen);
+      }}>
       {triggerButton && (
         <DialogTrigger asChild>
           <Button 
-            variant="outline" 
-            className="w-full min-h-[44px]"
+            variant={triggerClassName ? "outline" : "ghost"} 
+            className={triggerClassName || "w-full justify-start text-base sm:text-lg font-semibold h-12 min-h-[44px]"}
             aria-label="Abrir formulario de contacto"
           >
             <MessageCircle className="mr-2 h-4 w-4" aria-hidden="true" />
-            Consultanos Ahora
+            {triggerText}
           </Button>
         </DialogTrigger>
       )}
