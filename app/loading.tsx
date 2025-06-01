@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Loading() {
   return (
-    <main className="flex min-h-screen flex-col lg:flex-row pt-14 sm:pt-16 lg:pt-0">
+    <main className="flex min-h-screen flex-col lg:flex-row pt-16 lg:pt-0">
       {/* Sección Izquierda - Loading */}
       <section 
         className="w-full lg:w-1/2 flex flex-col justify-center items-center px-3 sm:px-6 lg:px-12 py-6 sm:py-8 lg:py-0 order-2 lg:order-1"

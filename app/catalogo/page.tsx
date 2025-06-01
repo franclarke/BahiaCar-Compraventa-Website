@@ -41,7 +41,7 @@ export default function CatalogoPage() {
   }, [fetchCars]);
 
   return (
-    <main className="min-h-screen pt-14 sm:pt-16 bg-gray-50">
+    <main className="min-h-screen pt-16 bg-gray-50">
       <div className="container mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6 lg:py-8">
         <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
           {/* Filtros */}
