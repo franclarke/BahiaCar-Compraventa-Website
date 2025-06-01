@@ -10,7 +10,7 @@ export function Header() {
 
   return (
     <header 
-      className="fixed w-full h-16 bg-white/90 backdrop-blur-sm z-50 border-b"
+      className="fixed w-full h-16 bg-white/95 backdrop-blur-sm z-50 border-b shadow-sm"
       role="banner"
     >
       <div className="container mx-auto h-full px-4 lg:px-6 flex items-center justify-between">
@@ -20,44 +20,70 @@ export function Header() {
           className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
           aria-label="BahiaCar - Ir a página principal"
         >
-          <div className="relative w-8 h-8 sm:w-10 sm:h-10 flex-shrink-0">
-            <Image
-              src="/logo.svg"
-              alt="BahiaCar Logo"
-              fill
-              className="object-contain"
-              priority
-            />
-          </div>
+          <Image
+            src="/logo.svg"
+            alt="BahiaCar Logo"
+            width={32}
+            height={32}
+            className="w-8 h-8 sm:w-10 sm:h-10"
+            priority
+          />
           <span className="text-lg sm:text-xl font-bold text-gray-900">BahiaCar</span>
         </Link>
         
-        {/* Navegación */}
+        {/* Navegación Desktop */}
         <nav 
-          className="flex items-center gap-3 sm:gap-4"
+          className="hidden md:flex items-center gap-4"
           role="navigation"
           aria-label="Navegación principal"
         >
           <Link href="/catalogo">
             <Button 
-              variant="outline" 
-              className="font-semibold hover:bg-primary hover:text-white transition-colors text-sm sm:text-base min-h-[44px] px-3 sm:px-4"
+              variant="ghost" 
+              className="font-medium hover:bg-gray-100 transition-colors text-base px-4"
               aria-label="Ver catálogo de vehículos"
             >
               Catálogo
             </Button>
           </Link>
           
-          <div className="hidden sm:flex items-center gap-3">
-            <SellCarDialog triggerText="Vender" />
-            <ContactDialog triggerText="Contacto" />
-          </div>
+          <SellCarDialog 
+            triggerText="Vender" 
+            triggerClassName="font-medium hover:bg-blue-50 hover:text-blue-700 text-base px-4"
+          />
           
-          {/* Botones móviles simplificados */}
-          <div className="flex sm:hidden items-center gap-2">
-            <SellCarDialog triggerText="Vender" />
-            <ContactDialog triggerText="Contacto" />
-          </div>
+          <ContactDialog 
+            triggerText="Contacto" 
+            triggerClassName="bg-primary text-white hover:bg-primary/90 font-medium text-base px-6"
+          />
+        </nav>
+
+        {/* Navegación Mobile */}
+        <nav 
+          className="flex md:hidden items-center gap-2"
+          role="navigation"
+          aria-label="Navegación móvil"
+        >
+          <Link href="/catalogo">
+            <Button 
+              variant="ghost" 
+              size="sm"
+              className="font-medium text-sm px-3"
+              aria-label="Ver catálogo de vehículos"
+            >
+              Catálogo
+            </Button>
+          </Link>
+          
+          <SellCarDialog 
+            triggerText="Vender" 
+            triggerClassName="text-sm px-3 font-medium"
+          />
+          
+          <ContactDialog 
+            triggerText="Contacto" 
+            triggerClassName="bg-primary text-white hover:bg-primary/90 text-sm px-3 font-medium"
+          />
         </nav>
       </div>
     </header>

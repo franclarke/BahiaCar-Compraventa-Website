@@ -115,7 +115,7 @@ export function ContactDialog({
       {triggerButton && (
         <DialogTrigger asChild>
           <Button 
-            variant={triggerClassName ? "outline" : "ghost"} 
+            variant="ghost"
             className={triggerClassName || "w-full justify-start text-base sm:text-lg font-semibold h-12 min-h-[44px]"}
             aria-label="Abrir formulario de contacto"
           >

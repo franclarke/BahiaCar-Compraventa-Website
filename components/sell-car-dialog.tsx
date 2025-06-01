@@ -118,7 +118,7 @@ export function SellCarDialog({
       }}>
       <DialogTrigger asChild>
         <Button 
-          variant={triggerClassName ? "default" : "ghost"}
+          variant="ghost"
           className={triggerClassName || "w-full justify-start text-base sm:text-lg font-semibold h-12 min-h-[44px]"}
           aria-label="Abrir formulario para vender tu vehículo"
         >
