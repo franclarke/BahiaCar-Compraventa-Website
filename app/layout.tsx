@@ -117,8 +117,6 @@ export const metadata: Metadata = {
       },
     ],
   },
-  msapplicationTileColor: '#0F172A',
-  msapplicationConfig: '/browserconfig.xml',
 };
 
 export default function RootLayout({
