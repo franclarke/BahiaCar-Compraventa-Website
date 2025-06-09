@@ -29,43 +29,35 @@ export default function Home() {
             </p>
           </header>
 
-          <nav className="space-y-3 sm:space-y-4" aria-label="Acciones principales">
-            <Link href="/catalogo" className="block">
-              <Button 
-                className="w-full text-base sm:text-lg py-4 sm:py-6 min-h-[44px]"
-                size="lg"
-                aria-describedby="catalog-description"
-              >
-                Explorar Autos Disponibles
-                <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
-              </Button>
-            </Link>
-            <span id="catalog-description" className="sr-only">
-              Ver todos los vehículos disponibles para compra
-            </span>
+          <nav className="flex flex-col sm:flex-row gap-3 sm:gap-4" aria-label="Acciones principales">
+            <Button 
+              asChild 
+              size="lg"
+              className="flex-1 text-base sm:text-lg py-4 sm:py-6"
+            >
+              <Link href="/catalogo">
+                Ver Catálogo
+                <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
+              </Link>
+            </Button>
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-              <SellCarDialog 
-                triggerClassName="w-full text-base sm:text-lg py-4 sm:py-6 min-h-[44px]"
-                triggerText="Publicá Tu Auto Hoy"
-              />
-              <ContactDialog 
-                triggerClassName="w-full text-base sm:text-lg py-4 sm:py-6 min-h-[44px] border-primary text-primary hover:bg-primary hover:text-white"
-                triggerText="Consultanos Ahora"
-              />
+            <div className="flex gap-2 sm:gap-3">
+              <SellCarDialog />
+              <ContactDialog />
             </div>
           </nav>
 
-          <section className="pt-4 sm:pt-6 border-t" aria-labelledby="newsletter-heading">
-            <h2 id="newsletter-heading" className="sr-only">
-              Suscripción al boletín de noticias
-            </h2>
+          <div className="bg-muted/50 rounded-lg p-4 sm:p-6 space-y-3 sm:space-y-4">
+            <h2 className="font-semibold text-base sm:text-lg">Mantente Informado</h2>
+            <p className="text-sm sm:text-base text-muted-foreground">
+              Suscríbete para recibir las mejores ofertas y novedades del mercado automotriz.
+            </p>
             <NewsletterForm />
-          </section>
+          </div>
         </div>
       </section>
 
-      {/* Sección Derecha - Imagen */}
+      {/* Sección Derecha - Imagen Hero Optimizada */}
       <section 
         className="w-full lg:w-1/2 h-[50vh] sm:h-[60vh] lg:h-screen relative order-1 lg:order-2"
         aria-label="Imagen destacada de vehículo"
@@ -77,8 +69,8 @@ export default function Home() {
             fill
             priority
             className="w-full h-full"
-            sizes="(max-width: 1024px) 100vw, 50vw"
-            quality={90}
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 50vw"
+            quality={70}
           />
           <div 
             className="absolute inset-0 bg-black/30" 
