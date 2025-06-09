@@ -56,10 +56,7 @@ function CarCardComponent({ car }: CarCardProps) {
           fill
           className="object-cover"
           sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
-          quality={70}
-          loading="lazy"
-          placeholder="blur"
-          blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
+          priority
         />
 
         {car.images.length > 1 && (
@@ -82,69 +79,78 @@ function CarCardComponent({ car }: CarCardProps) {
             </Button>
 
             {/* Indicadores de imágenes */}
-            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1 z-10">
+            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1 z-20">
               {car.images.map((_, index) => (
-                <div
+                <button
                   key={index}
-                  className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full transition-colors ${
+                  className={`w-1.5 h-1.5 rounded-full transition-colors ${
                     index === currentImageIndex ? "bg-white" : "bg-white/50"
                   }`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setCurrentImageIndex(index);
+                  }}
                 />
               ))}
             </div>
           </>
         )}
 
-        {/* Badge de estado y vendido */}
-        <div className="absolute top-2 right-2 flex flex-col gap-1 z-10">
-          <Badge 
-            variant={car.status === 'NEW' ? 'default' : 'secondary'}
-            className="text-xs font-medium"
-          >
-            {car.status === 'NEW' ? 'Nuevo' : 'Usado'}
-          </Badge>
-          {car.vendido && (
-            <Badge variant="destructive" className="text-xs font-medium">
-              Vendido
-            </Badge>
-          )}
-        </div>
+        <Badge
+          variant={car.status === "NEW" ? "default" : "secondary"}
+          className="absolute top-2 right-2 z-20 text-xs"
+        >
+          {car.status === "NEW" ? "Nuevo" : "Usado"}
+        </Badge>
+
+        {/* Etiqueta VENDIDO */}
+        {car.vendido && (
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+            <div 
+              className="bg-red-600 text-white font-bold text-sm sm:text-lg md:text-xl px-4 sm:px-8 py-1 sm:py-2 
+                         transform rotate-12 shadow-lg border-2 border-white
+                         opacity-95"
+              style={{
+                transform: 'rotate(-12deg) translateY(-10px)',
+              }}
+            >
+              VENDIDO
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Contenido de la Tarjeta */}
-      <CardContent className="p-3 sm:p-4">
-        <div className="space-y-2 sm:space-y-3">
-          <div>
-            <h3 className="font-semibold text-sm sm:text-base line-clamp-1">
-              {car.brand} {car.model}
-            </h3>
-            <p className="text-xs sm:text-sm text-muted-foreground">
-              {car.year} • {car.type}
-            </p>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="font-bold text-base sm:text-lg text-primary">
-                {formatPrice(car.price)}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                {car.mileage.toLocaleString()} km
+      <Link href={`/catalogo/${car.id}`}>
+        <CardContent className="p-3 sm:p-4 cursor-pointer">
+          {/* Información Principal */}
+          <div className="space-y-2">
+            <div className="flex justify-between items-start gap-2">
+              <div className="min-w-0 flex-1">
+                <h3 className="font-semibold text-base sm:text-lg md:text-xl truncate">
+                  {car.brand} {car.model}
+                </h3>
+                <p className="text-xs sm:text-sm text-muted-foreground">
+                  {car.year} • {car.transmission} • {car.fuelType}
+                </p>
+              </div>
+              <p className="text-base sm:text-lg md:text-xl font-bold text-green-600 flex-shrink-0">
+                USD {formatPrice(car.price)}
               </p>
             </div>
 
-            <Link href={`/catalogo/${car.id}`}>
-              <Button 
-                size="sm" 
-                className="text-xs sm:text-sm"
-                disabled={car.vendido}
-              >
-                {car.vendido ? 'Vendido' : 'Ver más'}
-              </Button>
-            </Link>
+            {/* Detalles Adicionales */}
+            <div className="flex flex-wrap gap-1 sm:gap-2 mt-2">
+              <Badge variant="outline" className="text-xs">{car.type}</Badge>
+              {car.status === "USED" && (
+                <Badge variant="outline" className="text-xs">
+                  {car.mileage.toLocaleString()} km
+                </Badge>
+              )}
+            </div>
           </div>
-        </div>
-      </CardContent>
+        </CardContent>
+      </Link>
     </Card>
   );
 }

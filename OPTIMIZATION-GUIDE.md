@@ -4,223 +4,201 @@ Esta guía documenta todas las optimizaciones implementadas para mejorar el rend
 
 ## 📊 Problemas Resueltos
 
-### 🎯 Rendimiento (Performance) - Score: 98/100
-- **✅ Properly size images**: **RESUELTO** - Ahorro de 3.324 KiB implementado
+### 🎯 Rendimiento (Performance)
+- **✅ Properly size images**: Ahorro potencial de 116 KiB
 - **✅ Minify JavaScript**: Ahorro potencial de 145 KiB  
 - **✅ Remove duplicate modules**: Ahorro potencial de 21 KiB
 - **✅ Avoid serving legacy JavaScript**: Ahorro potencial de 21 KiB
 - **✅ Reduce unused JavaScript**: Ahorro potencial de 615 KiB
 - **✅ Avoid long main-thread tasks**: Optimización de código asíncrono
-- **✅ Largest Contentful Paint**: Mejorado mediante imagen optimizada
+- **✅ Largest Contentful Paint**: Mejorado de 820ms mediante imagen optimizada
 
-### ♿ Accesibilidad (Accessibility) - Score: 93/100
+### ♿ Accesibilidad (Accessibility)
 - **✅ Buttons have accessible names**: Agregados aria-labels descriptivos
 - **✅ Form elements have associated labels**: Labels apropiados para todos los inputs
 - **✅ Touch targets sufficient size**: Mínimo 44px x 44px para elementos táctiles
 - **✅ Heading elements in descending order**: Estructura semántica h1 → h2 → h3
 
-### 🌐 Mejores Prácticas (Best Practices) - Score: 92/100
+### 🌐 Mejores Prácticas (Best Practices)
 - **✅ Navigation**: Estructura semántica con landmarks
 - **✅ SEO**: Metadatos completos y estructurados
 - **✅ Issues panel**: Solucionados errores de consola
 
-### 🔍 SEO - Score: 70/100
-- **✅ Meta descriptions**: Implementados
-- **✅ Structured data**: Schema.org para vehículos
-- **✅ Image alt texts**: Descriptivos y optimizados
-
 ## 🛠️ Optimizaciones Implementadas
 
-### 1. **Optimización de Imágenes (PRINCIPAL)**
-
-#### **Configuración de Next.js (`next.config.js`)**
+### 1. **Configuración de Next.js (`next.config.js`)**
 ```javascript
+// ✅ Habilitado SWC minification
+swcMinify: true
+
 // ✅ Formatos de imagen modernos
 formats: ['image/webp', 'image/avif']
 
-// ✅ Cache optimizado (24 horas)
-minimumCacheTTL: 86400
+// ✅ Code splitting optimizado
+optimization.splitChunks: { ... }
 
-// ✅ Tamaños de dispositivo optimizados
-deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840]
-imageSizes: [16, 32, 48, 64, 96, 128, 256, 384]
-
-// ✅ Headers de cache para imágenes
-Cache-Control: 'public, max-age=31536000, immutable'
+// ✅ Compresión habilitada
+compress: true
 ```
 
-#### **Componente OptimizedImage Mejorado**
+### 2. **Componente de Imagen Optimizada**
 - **Archivo**: `components/optimized-image.tsx`
 - **Características**:
-  - ✅ Calidad reducida a 75% (era 85%)
-  - ✅ Lazy loading inteligente con Intersection Observer
-  - ✅ Placeholder blur effect optimizado
-  - ✅ Manejo de errores robusto
-  - ✅ Responsive sizing automático
-  - ✅ Loading eager/lazy según prioridad
+  - Lazy loading automático
+  - Formatos WebP/AVIF
+  - Placeholder blur effect
+  - Manejo de errores
+  - Responsive sizing
 
-#### **Image Loader Optimizado**
-- **Archivo**: `lib/image-loader.js`
-- **Mejoras**:
-  - ✅ Calidad por defecto reducida a 70%
-  - ✅ Máximo 75% para Supabase
-  - ✅ Máximo 70% para dominios externos
-  - ✅ Parámetros de optimización para Supabase
+### 3. **Mejoras de Accesibilidad**
 
-### 2. **Optimizaciones por Componente**
+#### Formularios:
+- Labels asociados: `htmlFor` + `id`
+- Descripciones: `aria-describedby`
+- Estados de carga: `disabled` durante requests
+- Feedback visual: Loaders y estados
 
-#### **Hero Image (app/page.tsx)**
+#### Navegación:
+- Landmarks semánticos: `role="banner"`, `role="main"`
+- Estructura de encabezados: h1 → h2 → h3
+- Skip links implícitos
+- Tamaños táctiles: mínimo 44px
+
+#### Imágenes:
+- Alt text descriptivo
+- `aria-hidden` para íconos decorativos
+- Role="img" para placeholders
+
+### 4. **Optimización de Metadatos**
 ```javascript
-// ✅ Calidad reducida de 90% a 70% (AHORRO PRINCIPAL: 3.3MB)
-quality={70}
-sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 50vw"
-priority={true}
-```
-
-#### **Catálogo de Autos (car-card.tsx)**
-```javascript
-// ✅ Optimizaciones implementadas
-quality={70}
-loading="lazy"
-placeholder="blur"
-sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
-```
-
-#### **Detalle de Auto (catalogo/[id]/page.tsx)**
-```javascript
-// ✅ Imagen principal
-quality={75}
-sizes="(max-width: 768px) 100vw, 50vw"
-placeholder="blur"
-
-// ✅ Miniaturas
-quality={65}
-sizes="(max-width: 768px) 25vw, 12vw"
-loading="lazy"
-```
-
-#### **Panel de Administración**
-```javascript
-// ✅ Gestión de autos
-quality={70}
-loading="lazy"
-placeholder="blur"
-
-// ✅ Formulario de autos
-quality={70}
-loading="lazy"
-placeholder="blur"
-```
-
-### 3. **Configuración de Webpack Optimizada**
-```javascript
-// ✅ Optimizaciones de producción
-mergeDuplicateChunks: true
-removeAvailableModules: true
-removeEmptyChunks: true
-
-// ✅ Code splitting mejorado
-splitChunks: {
-  chunks: 'all',
-  cacheGroups: {
-    vendor: {
-      test: /[\\/]node_modules[\\/]/,
-      name: 'vendors',
-      priority: -10,
-      chunks: 'all'
-    }
-  }
+// ✅ Metadatos estructurados
+export const metadata: Metadata = {
+  title: { default: '...', template: '...' },
+  description: '...',
+  openGraph: { ... },
+  twitter: { ... },
+  robots: { ... }
 }
 ```
 
-### 4. **Lazy Loading Inteligente**
-```javascript
-// ✅ Intersection Observer con margen de 50px
-const observer = new IntersectionObserver(
-  ([entry]) => {
-    if (entry.isIntersecting) {
-      setIsInView(true);
-      observer.disconnect();
-    }
-  },
-  { 
-    rootMargin: '50px', // Cargar antes de ser visible
-    threshold: 0.1 
-  }
-);
+### 5. **Preconnect y DNS Prefetch**
+```html
+<!-- ✅ Preconnect para recursos críticos -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://maipuexclusivos.com.ar" />
+
+<!-- ✅ DNS prefetch para recursos secundarios -->
+<link rel="dns-prefetch" href="https://cdn.motor1.com" />
 ```
 
-## 📈 Resultados Esperados
+### 6. **Loading States Optimizados**
+- **Archivo**: `app/loading.tsx`
+- Skeletons eficientes
+- Aria-labels para accesibilidad
+- Responsive design
 
-### **Lighthouse Performance Improvements**
-- **Performance Score**: 98/100 ✅
-- **FCP (First Contentful Paint)**: 0.7s ✅
-- **LCP (Largest Contentful Paint)**: 3.4s (mejorado desde 4.9s)
-- **TBT (Total Blocking Time)**: 130ms ✅
-- **CLS (Cumulative Layout Shift)**: 0.001 ✅
+## 🚀 Scripts de Optimización
 
-### **Ahorro de Datos**
-- **Imagen Hero**: 3.324 KiB ahorrados ✅
-- **Formatos WebP/AVIF**: 25-35% menos peso
-- **Cache optimizado**: Menos requests al servidor
-- **Lazy loading**: Carga solo imágenes visibles
-
-### **Score de Optimización de Imágenes**
-```
-🎯 SCORE ACTUAL: 21/30 (70%)
-🖼️  Total de imágenes: 7
-⚡ Calidad optimizada: 5/7
-🚀 Lazy loading: 4/7  
-📱 Responsive sizes: 5/7
-🌫️  Blur placeholder: 5/7
-🎨 WebP/AVIF: ✅
-💾 Cache 24h: ✅
-```
-
-## 🔧 Scripts de Verificación
-
-### **Verificar Optimizaciones**
+### Build Optimizado
 ```bash
-npm run check:images
+npm run build:optimized
 ```
 
-### **Audit de Performance**
+### Análisis de Bundle
+```bash
+npm run build:analyze
+npm run bundle:analyze
+```
+
+### Auditoría de Performance
 ```bash
 npm run performance:audit
 ```
 
-### **Análisis de Bundle**
+## 📈 Métricas de Rendimiento Esperadas
+
+### Antes de las Optimizaciones:
+- **LCP**: 820ms
+- **JS Bundle**: ~800KB+ sin optimizar
+- **Accessibility Score**: <90
+
+### Después de las Optimizaciones:
+- **LCP**: <500ms (objetivo)
+- **JS Bundle**: ~200-300KB menos
+- **Accessibility Score**: >95
+- **Performance Score**: >90
+
+## 🔧 Mantenimiento Continuo
+
+### 1. **Monitoreo Regular**
 ```bash
-npm run bundle:analyze
+# Ejecutar cada deploy
+npm run performance:audit
+npm run build:analyze
 ```
 
-## 💡 Recomendaciones Adicionales
+### 2. **Checklist Pre-Deploy**
+- [ ] Linter sin errores: `npm run lint`
+- [ ] TypeScript sin errores: `npm run type-check`
+- [ ] Build exitoso: `npm run build:optimized`
+- [ ] Accessibility test manual
+- [ ] Performance audit < 90 score
 
-### **Para Mantener Performance 98+**
-1. **Monitorear tamaño de imágenes**: Máximo 1MB por imagen
-2. **Usar WebP/AVIF**: Automático con Next.js
-3. **Lazy loading**: Todas las imágenes excepto above-the-fold
-4. **Cache headers**: 24h+ para imágenes estáticas
-5. **Responsive images**: Especificar sizes para cada breakpoint
+### 3. **Optimizaciones Futuras**
+- **Service Worker** para caching avanzado
+- **Bundle splitting** más granular
+- **Image optimization** con CDN
+- **Critical CSS** inlining
+- **Preload** para recursos críticos
 
-### **Próximas Optimizaciones**
-- [ ] Implementar Service Worker para cache offline
-- [ ] Optimizar fonts con `next/font`
-- [ ] Implementar preload para recursos críticos
-- [ ] Añadir compresión Brotli en servidor
+## 📝 Buenas Prácticas Establecidas
 
-## ✅ Estado Actual
+### Componentes:
+```typescript
+// ✅ HACER: Usar componente OptimizedImage
+import { OptimizedImage } from '@/components/optimized-image';
 
-**Performance**: 98/100 🏆  
-**Accessibility**: 93/100 🥇  
-**Best Practices**: 92/100 🥇  
-**SEO**: 70/100 👍  
+// ❌ EVITAR: Usar img directamente
+<img src="..." alt="..." />
 
-**Problema Principal RESUELTO**: ✅ Properly size images (3.324 KiB ahorrados)
+// ✅ HACER: Botones con aria-label
+<Button aria-label="Descripción específica">
+  <Icon />
+</Button>
 
----
+// ❌ EVITAR: Botones sin contexto
+<Button><Icon /></Button>
+```
 
-*Última actualización: Optimizaciones de imagen implementadas para resolver el reporte de Lighthouse*
+### Formularios:
+```typescript
+// ✅ HACER: Labels asociados
+<Label htmlFor="unique-id">Nombre</Label>
+<Input id="unique-id" aria-describedby="help-text" />
+<span id="help-text" className="sr-only">Texto de ayuda</span>
+
+// ❌ EVITAR: Inputs sin labels
+<Input placeholder="Nombre" />
+```
+
+### Estructura HTML:
+```typescript
+// ✅ HACER: Jerarquía semántica
+<main>
+  <section aria-labelledby="main-heading">
+    <h1 id="main-heading">Título Principal</h1>
+    <h2>Subtítulo</h2>
+  </section>
+</main>
+
+// ❌ EVITAR: Div soup sin semántica
+<div>
+  <div>
+    <h3>Título</h3>
+    <h1>Subtítulo</h1>
+  </div>
+</div>
+```
 
 ## 🎯 Próximos Pasos
 

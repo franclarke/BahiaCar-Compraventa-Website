@@ -42,12 +42,9 @@ const nextConfig = {
     formats: ['image/webp', 'image/avif'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    minimumCacheTTL: 86400,
+    minimumCacheTTL: 60,
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
-    loader: 'default',
-    path: '/_next/image',
-    unoptimized: false,
   },
   
   experimental: {
@@ -55,7 +52,6 @@ const nextConfig = {
     scrollRestoration: true,
     serverMinification: true,
     serverComponentsExternalPackages: ['@prisma/client', 'prisma'],
-    optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
   },
 
   // Configuración específica para Netlify
@@ -65,59 +61,71 @@ const nextConfig = {
   compress: true,
   poweredByHeader: false,
   
-  // Optimización de bundles
-  webpack: (config, { dev, isServer }) => {
-    // Optimizaciones solo en producción
-    if (!dev) {
-      config.optimization = {
-        ...config.optimization,
-        mergeDuplicateChunks: true,
-        removeAvailableModules: true,
-        removeEmptyChunks: true,
-        splitChunks: {
-          chunks: 'all',
-          cacheGroups: {
-            default: {
-              minChunks: 2,
-              priority: -20,
-              reuseExistingChunk: true
-            },
-            vendor: {
-              test: /[\\/]node_modules[\\/]/,
-              name: 'vendors',
-              priority: -10,
-              chunks: 'all'
-            }
-          }
-        }
-      }
-    }
-    
-    return config
-  },
-
-  // Headers para optimización de cache
   async headers() {
     return [
       {
-        source: '/_next/image(.*)',
+        source: '/(.*)',
         headers: [
           {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY',
+          },
+          {
+            key: 'X-XSS-Protection',
+            value: '1; mode=block',
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'strict-origin-when-cross-origin',
           },
         ],
       },
       {
-        source: '/_next/static/(.*)',
+        source: '/api/(.*)',
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
+            value: 'public, s-maxage=60, stale-while-revalidate=86400',
           },
         ],
       },
-    ]
+    ];
+  },
+  
+  webpack: (config, { dev, isServer }) => {
+    // Configurar fallbacks y externals para módulos problemáticos
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      fs: false,
+      net: false,
+      tls: false,
+      child_process: false,
+    }
+
+    // Ignorar módulos opcionales de WebSocket
+    config.externals = config.externals || []
+    config.externals.push({
+      'bufferutil': 'bufferutil',
+      'utf-8-validate': 'utf-8-validate',
+    })
+
+    // Optimizaciones para producción
+    if (!dev && !isServer) {
+      config.optimization.splitChunks.cacheGroups = {
+        ...config.optimization.splitChunks.cacheGroups,
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendors',
+          chunks: 'all',
+        },
+      }
+    }
+
+    return config;
   },
 };
 

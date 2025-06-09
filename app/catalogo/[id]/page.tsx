@@ -138,10 +138,6 @@ export default function CarDetailPage({ params }: { params: { id: string } }) {
                 fill
                 className="object-cover"
                 priority
-                quality={75}
-                sizes="(max-width: 768px) 100vw, 50vw"
-                placeholder="blur"
-                blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
               />
               
               {/* Etiqueta VENDIDO */}
@@ -209,9 +205,6 @@ export default function CarDetailPage({ params }: { params: { id: string } }) {
                       alt={`${brand} ${model} - Vista ${index + 1}`}
                       fill
                       className="object-cover"
-                      quality={65}
-                      loading="lazy"
-                      sizes="(max-width: 768px) 25vw, 12vw"
                     />
                   </button>
                 ))}
