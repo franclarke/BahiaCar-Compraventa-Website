@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Plus, Check } from 'lucide-react'
 import {
   Select,
@@ -40,12 +40,7 @@ export function DynamicSelect({
   const [creating, setCreating] = useState(false)
   const { toast } = useToast()
 
-  // Cargar opciones al montar el componente
-  useEffect(() => {
-    loadOptions()
-  }, [category])
-
-  const loadOptions = async () => {
+  const loadOptions = useCallback(async () => {
     try {
       setLoading(true)
       const response = await fetch(`/api/cars/options?category=${category}`)
@@ -67,7 +62,12 @@ export function DynamicSelect({
     } finally {
       setLoading(false)
     }
-  }
+  }, [category, toast])
+
+  // Cargar opciones al montar el componente
+  useEffect(() => {
+    loadOptions()
+  }, [loadOptions])
 
   const handleCreateOption = async () => {
     if (!newOptionValue.trim()) {

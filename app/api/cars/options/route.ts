@@ -42,8 +42,10 @@ export async function GET(request: Request) {
       distinct: [fieldName]
     })
 
-    const valuesInUse = new Set(
-      carsWithValues.map(car => car[fieldName]).filter(Boolean)
+    const valuesInUse = new Set<string>(
+      carsWithValues
+        .map(car => car[fieldName as keyof typeof car] as string)
+        .filter(Boolean)
     )
 
     // Filtrar opciones: mostrar por defecto + las que están en uso
