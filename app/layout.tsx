@@ -59,7 +59,7 @@ export const metadata: Metadata = {
     description: 'La plataforma confiable en Bahía Blanca para comprar y vender autos y camionetas.',
     images: [
       {
-        url: '/logo.svg',
+        url: '/favicon.ico',
         width: 1200,
         height: 630,
         alt: 'BahiaCar Logo',
@@ -70,7 +70,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'BahiaCar - Compra y Venta de Autos',
     description: 'La plataforma confiable en Bahía Blanca para comprar y vender autos y camionetas.',
-    images: ['/logo.svg'],
+    images: ['/favicon.ico'],
   },
   robots: {
     index: true,
@@ -93,13 +93,7 @@ export const metadata: Metadata = {
     apple: [
       { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
     ],
-    other: [
-      {
-        rel: 'mask-icon',
-        url: '/logo.svg',
-        color: '#0F172A',
-      },
-    ],
+    other: [],
   },
   alternates: {
     canonical: '/',
@@ -109,12 +103,7 @@ export const metadata: Metadata = {
     capable: true,
     statusBarStyle: 'default',
     title: 'BahiaCar',
-    startupImage: [
-      {
-        url: '/logo.svg',
-        media: '(device-width: 768px) and (device-height: 1024px)',
-      },
-    ],
+    startupImage: [],
   },
 };
 
@@ -129,7 +118,7 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
         <meta name="theme-color" content="#0F172A" />
         <meta name="color-scheme" content="light dark" />
-        <link rel="preload" href="/logo.svg" as="image" type="image/svg+xml" />
+
         {/* Preconnect para recursos críticos */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
@@ -142,10 +131,8 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://http2.mlstatic.com" />
         
         {/* Favicons adicionales para máxima compatibilidad */}
-        <link rel="icon" type="image/svg+xml" href="/logo.svg" />
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-        <link rel="mask-icon" href="/logo.svg" color="#0F172A" />
         
         {/* PWA Manifest */}
         <link rel="manifest" href="/manifest.json" />
