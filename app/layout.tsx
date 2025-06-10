@@ -3,7 +3,6 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { Toaster } from "@/components/ui/toaster";
 import { Header } from "@/components/header";
-import { setupCleanup } from '@/lib/server-cleanup';
 import { cn } from '@/lib/utils';
 
 const inter = Inter({ 
@@ -12,10 +11,10 @@ const inter = Inter({
   variable: '--font-inter',
 });
 
-// Configurar la limpieza del servidor solo en el lado del servidor
-if (typeof window === 'undefined') {
-  setupCleanup();
-}
+// TODO: Re-habilitar setupCleanup cuando se resuelva el error de webpack
+// if (typeof window === 'undefined') {
+//   setupCleanup();
+// }
 
 export const viewport = {
   width: 'device-width',

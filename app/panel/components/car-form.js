@@ -11,6 +11,7 @@ import { Switch } from '@/components/ui/switch'
 import { X, Upload, Image as ImageIcon } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import Image from 'next/image'
+import { DynamicSelectAdmin } from '@/components/ui/dynamic-select-admin'
 
 export default function CarForm({ car, onClose, onSave }) {
   const [formData, setFormData] = useState({
@@ -243,53 +244,32 @@ export default function CarForm({ car, onClose, onSave }) {
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="transmission" className="text-sm font-medium">Transmisión</Label>
-              <Select value={formData.transmission} onValueChange={(value) => handleSelectChange('transmission', value)}>
-                <SelectTrigger className="text-sm sm:text-base">
-                  <SelectValue placeholder="Seleccionar transmisión" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Manual">Manual</SelectItem>
-                  <SelectItem value="Automática">Automática</SelectItem>
-                  <SelectItem value="CVT">CVT</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+            <DynamicSelectAdmin
+              category="TRANSMISSION"
+              value={formData.transmission}
+              onValueChange={(value) => handleSelectChange('transmission', value)}
+              label="Transmisión"
+              placeholder="Seleccionar transmisión"
+              className="text-sm sm:text-base"
+            />
 
-            <div className="space-y-2">
-              <Label htmlFor="type" className="text-sm font-medium">Tipo de Vehículo</Label>
-              <Select value={formData.type} onValueChange={(value) => handleSelectChange('type', value)}>
-                <SelectTrigger className="text-sm sm:text-base">
-                  <SelectValue placeholder="Seleccionar tipo" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Sedán">Sedán</SelectItem>
-                  <SelectItem value="SUV">SUV</SelectItem>
-                  <SelectItem value="Hatchback">Hatchback</SelectItem>
-                  <SelectItem value="Pickup">Pickup</SelectItem>
-                  <SelectItem value="Coupé">Coupé</SelectItem>
-                  <SelectItem value="Convertible">Convertible</SelectItem>
-                  <SelectItem value="Wagon">Wagon</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+            <DynamicSelectAdmin
+              category="TYPE"
+              value={formData.type}
+              onValueChange={(value) => handleSelectChange('type', value)}
+              label="Tipo de Vehículo"
+              placeholder="Seleccionar tipo"
+              className="text-sm sm:text-base"
+            />
 
-            <div className="space-y-2">
-              <Label htmlFor="fuelType" className="text-sm font-medium">Tipo de Combustible</Label>
-              <Select value={formData.fuelType} onValueChange={(value) => handleSelectChange('fuelType', value)}>
-                <SelectTrigger className="text-sm sm:text-base">
-                  <SelectValue placeholder="Seleccionar combustible" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Nafta">Nafta</SelectItem>
-                  <SelectItem value="Diésel">Diésel</SelectItem>
-                  <SelectItem value="GNC">GNC</SelectItem>
-                  <SelectItem value="Híbrido">Híbrido</SelectItem>
-                  <SelectItem value="Eléctrico">Eléctrico</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+            <DynamicSelectAdmin
+              category="FUEL_TYPE"
+              value={formData.fuelType}
+              onValueChange={(value) => handleSelectChange('fuelType', value)}
+              label="Tipo de Combustible"
+              placeholder="Seleccionar combustible"
+              className="text-sm sm:text-base"
+            />
 
             <div className="space-y-2 flex items-center">
               <div className="flex items-center space-x-2">
@@ -348,7 +328,7 @@ export default function CarForm({ car, onClose, onSave }) {
           {/* Nuevas imágenes */}
           <div className="space-y-3 sm:space-y-4">
             <Label htmlFor="images" className="text-sm font-medium">
-              {car ? 'Nuevas Imágenes' : 'Imágenes'}
+              {car ? 'Agregar más imágenes' : 'Imágenes'}
             </Label>
             <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 sm:p-6">
               <div className="text-center">
@@ -356,10 +336,10 @@ export default function CarForm({ car, onClose, onSave }) {
                 <div className="mt-3 sm:mt-4">
                   <Label htmlFor="images" className="cursor-pointer">
                     <span className="mt-2 block text-sm font-medium text-gray-900">
-                      Seleccionar imágenes
+                      {car ? 'Seleccionar imágenes adicionales' : 'Seleccionar imágenes'}
                     </span>
                     <span className="mt-1 block text-xs sm:text-sm text-gray-500">
-                      PNG, JPG, JPEG hasta 10MB cada una
+                      {car ? 'Se agregarán a las existentes' : 'PNG, JPG, JPEG hasta 10MB cada una'}
                     </span>
                   </Label>
                   <Input

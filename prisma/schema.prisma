@@ -49,6 +49,22 @@ model Car {
   createdAt   DateTime @default(now())
 }
 
+model CarOption {
+  id        Int      @id @default(autoincrement())
+  category  CarOptionCategory
+  value     String   @unique
+  isDefault Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([category])
+}
+
+enum CarOptionCategory {
+  TRANSMISSION
+  TYPE
+  FUEL_TYPE
+}
+
 model Message {
   id        Int      @id @default(autoincrement())
   name      String

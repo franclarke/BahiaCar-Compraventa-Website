@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useOptimistic, useCallback, useMemo } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -14,7 +14,17 @@ import Image from 'next/image'
 
 export default function CarManagement() {
   const [cars, setCars] = useState([])
-  const [filteredCars, setFilteredCars] = useState([])
+  const [optimisticCars, setOptimisticCars] = useOptimistic(
+    cars,
+    (currentCars, action) => {
+      switch (action.type) {
+        case 'DELETE_CAR':
+          return currentCars.filter(car => car.id !== action.carId)
+        default:
+          return currentCars
+      }
+    }
+  )
   const [isLoading, setIsLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
@@ -38,7 +48,7 @@ export default function CarManagement() {
     return null
   }
 
-  const fetchCars = async () => {
+  const fetchCars = useCallback(async () => {
     try {
       setIsLoading(true)
       
@@ -50,7 +60,6 @@ export default function CarManagement() {
       if (response.ok) {
         const data = await response.json()
         setCars(data)
-        setFilteredCars(data)
       } else {
         toast({
           title: 'Error',
@@ -71,61 +80,59 @@ export default function CarManagement() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [toast])
 
-  const handleSearch = (value) => {
-    setSearchTerm(value)
-    filterCars(value, statusFilter, vendidoFilter)
-  }
+  // Usar useMemo para filtrar los autos en lugar de useEffect para evitar bucles infinitos
+  const filteredCars = useMemo(() => {
+    let filtered = optimisticCars
 
-  const handleStatusFilter = (value) => {
-    setStatusFilter(value)
-    filterCars(searchTerm, value, vendidoFilter)
-  }
-
-  const handleVendidoFilter = (value) => {
-    setVendidoFilter(value)
-    filterCars(searchTerm, statusFilter, value)
-  }
-
-  const filterCars = (search, status, vendido) => {
-    let filtered = cars
-
-    if (search) {
+    if (searchTerm) {
       filtered = filtered.filter(car =>
-        car.brand.toLowerCase().includes(search.toLowerCase()) ||
-        car.model.toLowerCase().includes(search.toLowerCase()) ||
-        car.description.toLowerCase().includes(search.toLowerCase())
+        car.brand.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        car.model.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        car.description.toLowerCase().includes(searchTerm.toLowerCase())
       )
     }
 
-    if (status !== 'all') {
-      filtered = filtered.filter(car => car.status === status)
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter(car => car.status === statusFilter)
     }
 
-    if (vendido !== 'all') {
-      const isVendido = vendido === 'true'
+    if (vendidoFilter !== 'all') {
+      const isVendido = vendidoFilter === 'true'
       filtered = filtered.filter(car => car.vendido === isVendido)
     }
 
-    setFilteredCars(filtered)
-  }
+    return filtered
+  }, [optimisticCars, searchTerm, statusFilter, vendidoFilter])
 
-  const handleAddCar = () => {
+  const handleSearch = useCallback((value) => {
+    setSearchTerm(value)
+  }, [])
+
+  const handleStatusFilter = useCallback((value) => {
+    setStatusFilter(value)
+  }, [])
+
+  const handleVendidoFilter = useCallback((value) => {
+    setVendidoFilter(value)
+  }, [])
+
+  const handleAddCar = useCallback(() => {
     setSelectedCar(null)
     setShowCarForm(true)
-  }
+  }, [])
 
-  const handleEditCar = (car) => {
+  const handleEditCar = useCallback((car) => {
     setSelectedCar(car)
     setShowCarForm(true)
-  }
+  }, [])
 
-  const handleDeleteCar = (car) => {
+  const handleDeleteCar = useCallback((car) => {
     setCarToDelete(car)
-  }
+  }, [])
 
-  const handleCarSaved = () => {
+  const handleCarSaved = useCallback(() => {
     setShowCarForm(false)
     setSelectedCar(null)
     fetchCars()
@@ -133,28 +140,68 @@ export default function CarManagement() {
       title: 'Éxito',
       description: selectedCar ? 'Auto actualizado correctamente' : 'Auto creado correctamente'
     })
-  }
+  }, [selectedCar, fetchCars, toast])
 
-  const handleCarDeleted = () => {
-    setCarToDelete(null)
-    fetchCars()
-    toast({
-      title: 'Éxito',
-      description: 'Auto eliminado correctamente'
-    })
-  }
+  const handleOptimisticCarDelete = useCallback(async (carId) => {
+    // Actualización optimista - eliminar inmediatamente de la UI
+    setOptimisticCars({ type: 'DELETE_CAR', carId })
+    
+    try {
+      const response = await fetch(`/api/cars/admin?id=${carId}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      })
 
-  const formatPrice = (price) => {
+      if (response.ok) {
+        // Actualizar el estado real después de la eliminación exitosa
+        setCars(prevCars => prevCars.filter(car => car.id !== carId))
+        setCarToDelete(null)
+        
+        toast({
+          title: 'Éxito',
+          description: 'Auto eliminado correctamente'
+        })
+      } else {
+        // Si falla, revertir la operación optimista
+        const error = await response.json()
+        
+        // Recargar los datos para sincronizar con el servidor
+        await fetchCars()
+        
+        toast({
+          title: 'Error',
+          description: error.error || 'Error al eliminar el auto',
+          variant: 'destructive'
+        })
+      }
+    } catch (error) {
+      // Si hay error de red, revertir la operación optimista
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error eliminando auto:', error)
+      }
+      
+      // Recargar los datos para sincronizar con el servidor
+      await fetchCars()
+      
+      toast({
+        title: 'Error',
+        description: 'Error de conexión',
+        variant: 'destructive'
+      })
+    }
+  }, [setOptimisticCars, setCars, setCarToDelete, fetchCars, toast])
+
+  const formatPrice = useCallback((price) => {
     return new Intl.NumberFormat('es-AR', {
       style: 'currency',
       currency: 'ARS',
       minimumFractionDigits: 0
     }).format(price)
-  }
+  }, [])
 
   useEffect(() => {
     fetchCars()
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [fetchCars])
 
   if (isLoading) {
     return (
@@ -225,7 +272,7 @@ export default function CarManagement() {
       </Card>
 
       {/* Lista de autos */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {filteredCars.map(car => (
           <Card key={car.id} className="overflow-hidden">
             <div className="aspect-video bg-gray-200 relative">
@@ -258,41 +305,50 @@ export default function CarManagement() {
             
             <CardContent className="p-3 sm:p-4">
               <div className="space-y-2">
-                <h3 className="font-semibold text-base sm:text-lg line-clamp-1">
+                <h3 className="font-semibold text-base sm:text-lg truncate">
                   {car.brand} {car.model}
                 </h3>
-                <p className="text-xs sm:text-sm text-gray-600">
-                  {car.year} • {car.mileage.toLocaleString()} km
-                </p>
-                <p className="text-base sm:text-lg font-bold text-green-600">
-                  {formatPrice(car.price)}
-                </p>
-                <p className="text-xs sm:text-sm text-gray-600 line-clamp-2">
-                  {car.description}
-                </p>
-              </div>
-              
-              <div className="flex justify-between items-center mt-3 sm:mt-4 pt-3 sm:pt-4 border-t">
-                <div className="flex space-x-2">
+                <p className="text-sm text-gray-600">Año {car.year}</p>
+                
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-1">
+                    <DollarSign className="h-4 w-4 text-green-600" />
+                    <span className="font-semibold text-green-600 text-sm sm:text-base">
+                      {formatPrice(car.price)}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-2 pt-2">
                   <Button
-                    size="sm"
                     variant="outline"
+                    size="sm"
+                    onClick={() => window.open(`/catalogo/${car.id}`, '_blank')}
+                    className="flex items-center justify-center space-x-1 text-xs sm:text-sm"
+                  >
+                    <Eye className="h-3 w-3 sm:h-4 sm:w-4" />
+                    <span>Ver</span>
+                  </Button>
+                  
+                  <Button
+                    variant="outline"
+                    size="sm"
                     onClick={() => handleEditCar(car)}
-                    className="p-2"
+                    className="flex items-center justify-center space-x-1 text-xs sm:text-sm"
                   >
                     <Edit className="h-3 w-3 sm:h-4 sm:w-4" />
+                    <span>Editar</span>
                   </Button>
+                  
                   <Button
-                    size="sm"
                     variant="outline"
+                    size="sm"
                     onClick={() => handleDeleteCar(car)}
-                    className="text-red-600 hover:text-red-700 p-2"
+                    className="flex items-center justify-center space-x-1 text-xs sm:text-sm text-red-600 hover:text-red-700 hover:bg-red-50"
                   >
                     <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
+                    <span>Eliminar</span>
                   </Button>
-                </div>
-                <div className="text-[10px] sm:text-xs text-gray-500 truncate max-w-[60px] sm:max-w-none">
-                  ID: {car.id}
                 </div>
               </div>
             </CardContent>
@@ -321,7 +377,7 @@ export default function CarManagement() {
         <DeleteCarDialog
           car={carToDelete}
           onClose={() => setCarToDelete(null)}
-          onDelete={handleCarDeleted}
+          onDelete={() => handleOptimisticCarDelete(carToDelete.id)}
         />
       )}
     </div>

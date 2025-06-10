@@ -112,18 +112,27 @@ export async function POST(request) {
     const imageFiles = formData.getAll('images')
     let imageUrls = []
 
-    if (imageFiles.length > 0 && imageFiles[0].size > 0) {
-      const uploadResult = await uploadMultipleCarImages(imageFiles, car.id)
+    // Filtrar archivos válidos (que tengan contenido)
+    const validImageFiles = imageFiles.filter(file => file && file.size > 0)
+
+    if (validImageFiles.length > 0) {
+      console.log(`Subiendo ${validImageFiles.length} imágenes para el auto ${car.id}`)
+      const uploadResult = await uploadMultipleCarImages(validImageFiles, car.id)
       
       if (uploadResult.success) {
         imageUrls = uploadResult.urls
+        console.log(`Imágenes subidas exitosamente:`, imageUrls)
         
         // Actualizar el auto con las URLs de las imágenes
         await prisma.car.update({
           where: { id: car.id },
           data: { images: imageUrls }
         })
+      } else {
+        console.error('Error en la subida de imágenes:', uploadResult.error)
       }
+    } else {
+      console.log('No se encontraron imágenes válidas para subir')
     }
 
     const updatedCar = await prisma.car.findUnique({
@@ -184,21 +193,28 @@ export async function PUT(request) {
     if (removeImages === 'true') {
       // Eliminar imágenes existentes del storage
       if (currentCar.images.length > 0) {
+        console.log('Eliminando imágenes existentes del storage')
         await deleteMultipleCarImages(currentCar.images)
       }
       imageUrls = []
     }
 
-    if (newImageFiles.length > 0 && newImageFiles[0].size > 0) {
-      const uploadResult = await uploadMultipleCarImages(newImageFiles, carId)
+    // Filtrar archivos válidos (que tengan contenido)
+    const validNewImageFiles = newImageFiles.filter(file => file && file.size > 0)
+
+    if (validNewImageFiles.length > 0) {
+      console.log(`Subiendo ${validNewImageFiles.length} nuevas imágenes para el auto ${carId}`)
+      const uploadResult = await uploadMultipleCarImages(validNewImageFiles, carId)
       
       if (uploadResult.success) {
-        if (removeImages === 'true') {
-          imageUrls = uploadResult.urls
-        } else {
-          imageUrls = [...imageUrls, ...uploadResult.urls]
-        }
+        console.log(`Nuevas imágenes subidas exitosamente:`, uploadResult.urls)
+        // Siempre agregar las nuevas imágenes a las existentes (a menos que se haya marcado removeImages)
+        imageUrls = [...imageUrls, ...uploadResult.urls]
+      } else {
+        console.error('Error en la subida de nuevas imágenes:', uploadResult.error)
       }
+    } else {
+      console.log('No se encontraron nuevas imágenes válidas para subir')
     }
 
     // Actualizar el auto

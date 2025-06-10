@@ -60,6 +60,14 @@ const nextConfig = {
   // Optimizaciones adicionales
   compress: true,
   poweredByHeader: false,
+
+  // Configuración para desarrollo
+  onDemandEntries: {
+    // Período en ms para mantener páginas en memoria en desarrollo
+    maxInactiveAge: 25 * 1000,
+    // Número de páginas que se mantienen simultáneamente
+    pagesBufferLength: 2,
+  },
   
   async headers() {
     return [

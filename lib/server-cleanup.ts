@@ -1,6 +1,7 @@
 import { prisma } from './prisma';
 
 let isShuttingDown = false;
+let cleanupSetup = false;
 
 async function cleanup(exitCode: number = 0) {
   if (isShuttingDown) return;
@@ -19,6 +20,13 @@ async function cleanup(exitCode: number = 0) {
 }
 
 export function setupCleanup() {
+  // Evitar configurar múltiples listeners
+  if (cleanupSetup) return;
+  cleanupSetup = true;
+
+  // Establecer un límite más alto para los listeners de eventos
+  process.setMaxListeners(20);
+  
   // Manejar señales de terminación
   process.on('SIGTERM', () => cleanup(0));
   process.on('SIGINT', () => cleanup(0));

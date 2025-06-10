@@ -25,6 +25,7 @@ import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { useSliderWithInput } from "@/hooks/use-slider-with-input";
 import { Slider } from "@/components/ui/slider";
+import { useCarOptions } from "@/hooks/use-car-options";
 
 interface CarFiltersProps {
   onFilterChange: (filters: Record<string, any>) => void;
@@ -106,6 +107,11 @@ export function CarFilters({ onFilterChange }: CarFiltersProps) {
   const [selectedFuelType, setSelectedFuelType] = useState<string | null>(null);
   const [selectedSoldStatus, setSelectedSoldStatus] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(false);
+
+  // Cargar opciones dinámicas
+  const { options: transmissionOptions } = useCarOptions('TRANSMISSION');
+  const { options: typeOptions } = useCarOptions('TYPE');
+  const { options: fuelTypeOptions } = useCarOptions('FUEL_TYPE');
 
   const {
     sliderValue: priceSliderValue,
@@ -295,9 +301,9 @@ export function CarFilters({ onFilterChange }: CarFiltersProps) {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Todos</SelectItem>
-                {types.map((type) => (
-                  <SelectItem key={type} value={type}>
-                    {type}
+                {typeOptions.map((option) => (
+                  <SelectItem key={option.id} value={option.value}>
+                    {option.value}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -336,8 +342,11 @@ export function CarFilters({ onFilterChange }: CarFiltersProps) {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Todas</SelectItem>
-                <SelectItem value="Manual">Manual</SelectItem>
-                <SelectItem value="Automatica">Automática</SelectItem>
+                {transmissionOptions.map((option) => (
+                  <SelectItem key={option.id} value={option.value}>
+                    {option.value}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
@@ -349,8 +358,11 @@ export function CarFilters({ onFilterChange }: CarFiltersProps) {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Todos</SelectItem>
-                <SelectItem value="Nafta">Nafta</SelectItem>
-                <SelectItem value="Diesel">Diesel</SelectItem>
+                {fuelTypeOptions.map((option) => (
+                  <SelectItem key={option.id} value={option.value}>
+                    {option.value}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
@@ -439,7 +451,9 @@ export function CarFilters({ onFilterChange }: CarFiltersProps) {
     ),
     [
       brands,
-      types,
+      typeOptions,
+      transmissionOptions,
+      fuelTypeOptions,
       models,
       selectedBrand,
       selectedModel,

@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { ContactDialog } from "@/components/contact-dialog";
 import { SellCarDialog } from "@/components/sell-car-dialog";
+import { User } from "lucide-react";
 
 export function Header() {
 
@@ -37,16 +38,6 @@ export function Header() {
           role="navigation"
           aria-label="Navegación principal"
         >
-          <Link href="/catalogo">
-            <Button 
-              variant="ghost" 
-              className="font-medium hover:bg-gray-100 transition-colors text-base px-4"
-              aria-label="Ver catálogo de vehículos"
-            >
-              Catálogo
-            </Button>
-          </Link>
-          
           <SellCarDialog 
             triggerText="Vender" 
             triggerClassName="font-medium hover:bg-blue-50 hover:text-blue-700 text-base px-4"
@@ -54,8 +45,31 @@ export function Header() {
           
           <ContactDialog 
             triggerText="Contacto" 
-            triggerClassName="bg-primary text-white hover:bg-primary/90 font-medium text-base px-6"
+            triggerClassName="font-medium hover:bg-blue-50 hover:text-blue-700 text-base px-4"
           />
+
+          <div className="flex items-center gap-1">
+            <Link href="/catalogo">
+              <Button 
+                variant="ghost" 
+                className="bg-primary text-white hover:bg-primary/90 font-medium text-base px-6"
+                aria-label="Ver catálogo de vehículos"
+              >
+                Catálogo
+              </Button>
+            </Link>
+            
+            <Link href="/login">
+              <Button 
+                variant="ghost" 
+                size="sm"
+                className="text-gray-400 hover:text-gray-600 hover:bg-gray-50 p-1.5 h-7 w-7"
+                aria-label="Acceso administrador"
+              >
+                <User className="h-3.5 w-3.5" />
+              </Button>
+            </Link>
+          </div>
         </nav>
 
         {/* Navegación Mobile */}
@@ -64,16 +78,29 @@ export function Header() {
           role="navigation"
           aria-label="Navegación móvil"
         >
-          <Link href="/catalogo">
-            <Button 
-              variant="ghost" 
-              size="sm"
-              className="font-medium text-xs px-2 h-8"
-              aria-label="Ver catálogo de vehículos"
-            >
-              Catálogo
-            </Button>
-          </Link>
+          <div className="flex items-center gap-0.5">
+            <Link href="/catalogo">
+              <Button 
+                variant="ghost" 
+                size="sm"
+                className="font-medium text-xs px-2 h-8"
+                aria-label="Ver catálogo de vehículos"
+              >
+                Catálogo
+              </Button>
+            </Link>
+            
+            <Link href="/login">
+              <Button 
+                variant="ghost" 
+                size="sm"
+                className="text-gray-400 hover:text-gray-600 hover:bg-gray-50 p-1 h-6 w-6"
+                aria-label="Acceso administrador"
+              >
+                <User className="h-3 w-3" />
+              </Button>
+            </Link>
+          </div>
           
           <SellCarDialog 
             triggerText="Vender" 
