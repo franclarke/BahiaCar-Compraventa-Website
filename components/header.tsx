@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import Link from "next/link";
@@ -5,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { ContactDialog } from "@/components/contact-dialog";
 import { SellCarDialog } from "@/components/sell-car-dialog";
 import { User } from "lucide-react";
-import Image from "next/image";
 
 export function Header() {
 
@@ -25,13 +25,7 @@ export function Header() {
             className="w-7 h-7 sm:w-10 sm:h-10  flex items-center justify-center"
             aria-hidden="true"
           >
-           <Image
-              src={"/logo.svg"}       // o "/logo.png" si está en /public
-              alt="Logo"
-              width={200}      // ancho en px
-              height={200}     // alto en px
-              priority         // opcional, carga prioritaria
-            />
+           <img src="/logo.svg" alt="Logo" width={200} height={200} />
           </div>
           <span className="text-base sm:text-xl font-bold text-gray-900">SYM Automotores</span>
         </Link>
