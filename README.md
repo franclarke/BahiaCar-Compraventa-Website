@@ -1,11 +1,13 @@
-# BahiaCar Compraventa 🚗
+# SYM Automotores Compraventa 🚗
 
 ## Descripción
-BahiaCar Compraventa es una plataforma web moderna diseñada para la compra y venta de vehículos en Bahía Blanca y la región. Ofrece una experiencia de usuario intuitiva y herramientas eficientes para la búsqueda y publicación de vehículos.
+
+SYM Automotores Compraventa es una plataforma web moderna diseñada para la compra y venta de vehículos en Bahía Blanca y la región. Ofrece una experiencia de usuario intuitiva y herramientas eficientes para la búsqueda y publicación de vehículos.
 
 ## Características Principales 🌟
 
 ### Para Compradores
+
 - **Catálogo Interactivo**: Exploración fácil de vehículos disponibles
 - **Filtros Avanzados**: Búsqueda por:
   - Marca
@@ -19,6 +21,7 @@ BahiaCar Compraventa es una plataforma web moderna diseñada para la compra y ve
 - **Interfaz Responsiva**: Experiencia optimizada en todos los dispositivos
 
 ### Para Vendedores
+
 - **Publicación Simple**: Proceso intuitivo para listar vehículos
 - **Gestión de Anuncios**: Control total sobre las publicaciones
 - **Formulario de Venta**: Captura detallada de información del vehículo
@@ -59,8 +62,8 @@ npm install
    - Crear archivo \`.env\` en la raíz del proyecto
    - Agregar las siguientes variables:
 \`\`\`env
-DATABASE_URL="postgresql://[usuario]:[contraseña]@localhost:5432/bahiacar"
-DIRECT_URL="postgresql://[usuario]:[contraseña]@localhost:5432/bahiacar"
+DATABASE_URL="postgresql://[usuario]:[contraseña]@localhost:5432/SYM Automotores"
+DIRECT_URL="postgresql://[usuario]:[contraseña]@localhost:5432/SYM Automotores"
 \`\`\`
 
 4. Ejecutar migraciones de la base de datos:
@@ -109,6 +112,7 @@ npm run dev
 ## Soporte 📧
 
 Para soporte y consultas, por favor contactar a través de:
+
 - Email: [correo_de_soporte]
 - Issues del repositorio
 
@@ -117,4 +121,4 @@ Para soporte y consultas, por favor contactar a través de:
 Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE.md](LICENSE.md) para más detalles.
 
 ---
-Desarrollado con ❤️ para la comunidad de Bahía Blanca 
+Desarrollado con ❤️ para la comunidad de Bahía Blanca

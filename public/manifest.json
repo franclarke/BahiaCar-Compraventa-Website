@@ -1,6 +1,6 @@
 {
-  "name": "BahiaCar - Compra y Venta de Autos",
-  "short_name": "BahiaCar",
+  "name": "SYM Automotores - Compra y Venta de Autos",
+  "short_name": "SYM Automotores",
   "description": "La plataforma confiable en Bahía Blanca para comprar y vender autos y camionetas",
   "start_url": "/",
   "display": "standalone",

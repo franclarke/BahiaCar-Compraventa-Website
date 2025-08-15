@@ -16,7 +16,7 @@ export default function Home() {
         className="w-full lg:w-1/2 flex flex-col justify-center items-center px-3 sm:px-6 lg:px-12 py-6 sm:py-8 lg:py-0 order-2 lg:order-1"
         aria-labelledby="main-heading"
       >
-        <div className="max-w-xl mx-auto lg:mx-0 w-full space-y-6 sm:space-y-8">
+        <div className="max-w-xl mx-auto pt-16 lg:mx-0 w-full space-y-6 sm:space-y-8">
           <header className="text-center lg:text-left space-y-3 sm:space-y-4">
             <h1 
               id="main-heading"
@@ -65,13 +65,13 @@ export default function Home() {
 
       {/* Sección Derecha */}
       <section 
-        className="w-full lg:w-1/2 h-[50vh] sm:h-[60vh] lg:h-screen relative order-1 lg:order-2"
+        className="w-full lg:w-1/2 sm:h-[60vh] lg:h-screen relative order-1 lg:order-2"
         aria-label="Imagen destacada de vehículo"
       >
         <div className="relative w-full h-full overflow-hidden">
           <Image
             src="https://maipuexclusivos.com.ar/wp-content/uploads/sites/8/2022/08/1440x1920-audi-a3-sedan-my2021-1023.jpg"
-            alt="Audi A3 Sedan 2021 - Vehículo de lujo disponible en BahiaCar"
+            alt="Audi A3 Sedan 2021 - Vehículo de lujo disponible en SYM Automotores"
             fill
             priority
             className="object-cover"

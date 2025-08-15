@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ContactDialog } from "@/components/contact-dialog";
 import { SellCarDialog } from "@/components/sell-car-dialog";
 import { User } from "lucide-react";
+import Image from "next/image";
 
 export function Header() {
 
@@ -18,34 +19,21 @@ export function Header() {
         <Link 
           href="/"
           className="flex items-center space-x-2 sm:space-x-3 hover:opacity-80 transition-opacity"
-          aria-label="BahiaCar - Ir a página principal"
+          aria-label="SYM Automotores - Ir a página principal"
         >
           <div 
-            className="w-7 h-7 sm:w-10 sm:h-10 bg-slate-900 rounded-full flex items-center justify-center"
+            className="w-7 h-7 sm:w-10 sm:h-10  flex items-center justify-center"
             aria-hidden="true"
           >
-            <svg 
-              width="20" 
-              height="20" 
-              viewBox="0 0 48 48" 
-              fill="none" 
-              className="w-4 h-4 sm:w-6 sm:h-6"
-            >
-              <path 
-                d="M12 28C12 25.7909 13.7909 24 16 24H32C34.2091 24 36 25.7909 36 28V32C36 34.2091 34.2091 36 32 36H16C13.7909 36 12 34.2091 12 32V28Z" 
-                fill="#E2E8F0"
-              />
-              <path 
-                d="M14 20L18 16H30L34 20" 
-                stroke="#E2E8F0" 
-                strokeWidth="2" 
-                strokeLinecap="round"
-              />
-              <circle cx="17" cy="30" r="2" fill="#0F172A"/>
-              <circle cx="31" cy="30" r="2" fill="#0F172A"/>
-            </svg>
+           <Image
+              src={"/logo.svg"}       // o "/logo.png" si está en /public
+              alt="Logo"
+              width={200}      // ancho en px
+              height={200}     // alto en px
+              priority         // opcional, carga prioritaria
+            />
           </div>
-          <span className="text-base sm:text-xl font-bold text-gray-900">BahiaCar</span>
+          <span className="text-base sm:text-xl font-bold text-gray-900">SYM Automotores</span>
         </Link>
         
         {/* Navegación Desktop */}
@@ -75,14 +63,14 @@ export function Header() {
               </Button>
             </Link>
             
-            <Link href="/login">
+            <Link href="/login" className="p-2">
               <Button 
                 variant="ghost" 
                 size="sm"
                 className="text-gray-400 hover:text-gray-600 hover:bg-gray-50 p-1.5 h-7 w-7"
                 aria-label="Acceso administrador"
               >
-                <User className="h-3.5 w-3.5" />
+                <User className="h-4 w-4" />
               </Button>
             </Link>
           </div>
@@ -113,7 +101,7 @@ export function Header() {
                 className="text-gray-400 hover:text-gray-600 hover:bg-gray-50 p-1 h-6 w-6"
                 aria-label="Acceso administrador"
               >
-                <User className="h-3 w-3" />
+                <User className="h-3 w-3"  />
               </Button>
             </Link>
           </div>

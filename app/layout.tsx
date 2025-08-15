@@ -29,8 +29,8 @@ export const viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL('https://bahiacarcompraventa.netlify.app'),
   title: {
-    default: 'BahiaCar - Compra y Venta de Autos en Bahía Blanca',
-    template: '%s | BahiaCar'
+    default: 'SYM Automotores - Compra y Venta de Autos en Bahía Blanca',
+    template: '%s | SYM Automotores'
   },
   description: 'La plataforma confiable en Bahía Blanca para comprar y vender autos y camionetas. Encuentra tu vehículo ideal o publica tu auto para vender.',
   keywords: [
@@ -42,9 +42,9 @@ export const metadata: Metadata = {
     'concesionaria',
     'bahía blanca'
   ],
-  authors: [{ name: 'BahiaCar' }],
-  creator: 'BahiaCar',
-  publisher: 'BahiaCar',
+  authors: [{ name: 'SYM Automotores' }],
+  creator: 'SYM Automotores',
+  publisher: 'SYM Automotores',
   formatDetection: {
     email: false,
     address: false,
@@ -54,21 +54,21 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'es_AR',
     url: 'https://bahiacarcompraventa.netlify.app',
-    siteName: 'BahiaCar',
-    title: 'BahiaCar - Compra y Venta de Autos en Bahía Blanca',
+    siteName: 'SYM Automotores',
+    title: 'SYM Automotores - Compra y Venta de Autos en Bahía Blanca',
     description: 'La plataforma confiable en Bahía Blanca para comprar y vender autos y camionetas.',
     images: [
       {
         url: '/favicon.ico',
         width: 1200,
         height: 630,
-        alt: 'BahiaCar Logo',
+        alt: 'SYM Automotores Logo',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'BahiaCar - Compra y Venta de Autos',
+    title: 'SYM Automotores - Compra y Venta de Autos',
     description: 'La plataforma confiable en Bahía Blanca para comprar y vender autos y camionetas.',
     images: ['/favicon.ico'],
   },
@@ -98,11 +98,11 @@ export const metadata: Metadata = {
   alternates: {
     canonical: '/',
   },
-  applicationName: 'BahiaCar',
+  applicationName: 'SYM Automotores',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'BahiaCar',
+    title: 'SYM Automotores',
     startupImage: [],
   },
 };
@@ -141,8 +141,8 @@ export default function RootLayout({
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="BahiaCar" />
-        <meta name="application-name" content="BahiaCar" />
+        <meta name="apple-mobile-web-app-title" content="SYM Automotores" />
+        <meta name="application-name" content="SYM Automotores" />
         <meta name="msapplication-TileColor" content="#0F172A" />
         <meta name="msapplication-config" content="/browserconfig.xml" />
       </head>

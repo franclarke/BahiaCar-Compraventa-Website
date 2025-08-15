@@ -3,7 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 
-console.log('🎨 Generador de Favicons para BahiaCar\n');
+console.log('🎨 Generador de Favicons para SYM Automotores\n');
 
 // Leer el logo.svg original
 const logoPath = path.join(process.cwd(), 'public', 'logo.svg');
@@ -29,7 +29,7 @@ faviconSizes.forEach(({ size, filename }) => {
 });
 
 // Crear un README con instrucciones para generar formatos PNG/ICO
-const readmeContent = `# 🎨 Favicons de BahiaCar
+const readmeContent = `# 🎨 Favicons de SYM Automotores
 
 ## Archivos Generados
 
