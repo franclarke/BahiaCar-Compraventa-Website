@@ -472,7 +472,7 @@ export default function CarForm({ car, onClose, onSave }) {
                       PNG, JPG, JPEG hasta 10MB cada una
                     </span>
                     <span className="mt-1 block text-xs text-blue-600">
-                      📱 Móvil: Puedes tomar fotos directamente o seleccionar de galería
+                      📱 Móvil: Elige "Seleccionar de Galería" o "Tomar Foto" según prefieras
                     </span>
                   </Label>
                   <Input
@@ -480,22 +480,41 @@ export default function CarForm({ car, onClose, onSave }) {
                     type="file"
                     multiple
                     accept="image/*"
-                    capture="environment"
                     onChange={handleImageChange}
                     className="hidden"
                   />
                 </div>
-                <div className="mt-2">
+                <div className="mt-2 flex gap-2 justify-center">
                   <Button
                     type="button"
                     variant="outline"
                     size="sm"
                     onClick={() => document.getElementById('images').click()}
-                    className="text-xs sm:text-sm"
+                    className="text-xs sm:text-sm flex-1 max-w-[140px]"
                   >
-                    📷 Seleccionar Fotos
+                    📁 Seleccionar de Galería
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => document.getElementById('camera-input').click()}
+                    className="text-xs sm:text-sm flex-1 max-w-[120px]"
+                  >
+                    📷 Tomar Foto
                   </Button>
                 </div>
+                
+                {/* Hidden camera input */}
+                <Input
+                  id="camera-input"
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  capture="environment"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
               </div>
             </div>
 
