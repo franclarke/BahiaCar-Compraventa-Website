@@ -16,7 +16,7 @@ export default function Home() {
         className="w-full lg:w-1/2 flex flex-col justify-center items-center px-3 sm:px-6 lg:px-12 py-6 sm:py-8 lg:py-0 order-2 lg:order-1"
         aria-labelledby="main-heading"
       >
-        <div className="max-w-xl mx-auto pt-16 lg:mx-0 w-full space-y-6 sm:space-y-8">
+        <div className="max-w-xl mx-auto lg:mx-0 w-full space-y-6 sm:space-y-8">
           <header className="text-center lg:text-left space-y-3 sm:space-y-4">
             <h1 
               id="main-heading"

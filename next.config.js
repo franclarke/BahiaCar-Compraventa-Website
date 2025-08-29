@@ -56,13 +56,15 @@ const nextConfig = {
     forceSwcTransforms: false, // Fallback to Babel if SWC fails
   },
 
+  // SWC Configuration - Fallback strategy
+  swcMinify: false, // Disable SWC minify entirely, use Terser instead
+
   // Configuración específica para Netlify
   output: process.env.NETLIFY ? 'standalone' : undefined,
   
   // Optimizaciones adicionales
   compress: true,
   poweredByHeader: false,
-  swcMinify: process.env.NODE_ENV === 'production', // Use SWC only in production, fallback to Terser in development
 
   // Configuración para desarrollo
   onDemandEntries: {
@@ -133,8 +135,16 @@ const nextConfig = {
       'utf-8-validate': 'utf-8-validate',
     })
 
-    // Optimizaciones para producción
+    // SWC Fallback - Ignore SWC binary errors and fallback to Babel/Terser
+    config.module = config.module || {}
+    config.module.rules = config.module.rules || []
+    
+    // Force Terser for minification instead of SWC
     if (!dev && !isServer) {
+      config.optimization = config.optimization || {}
+      config.optimization.minimize = true
+      config.optimization.minimizer = config.optimization.minimizer || []
+      
       config.optimization.splitChunks.cacheGroups = {
         ...config.optimization.splitChunks.cacheGroups,
         vendor: {

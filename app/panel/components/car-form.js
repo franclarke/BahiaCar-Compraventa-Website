@@ -19,8 +19,8 @@ export default function CarForm({ car, onClose, onSave }) {
     model: '',
     year: new Date().getFullYear(),
     status: 'USED',
-    mileage: 0,
-    price: 0,
+    mileage: '',
+    price: '',
     transmission: '',
     type: '',
     fuelType: '',
@@ -40,8 +40,8 @@ export default function CarForm({ car, onClose, onSave }) {
         model: car.model || '',
         year: car.year || new Date().getFullYear(),
         status: car.status || 'USED',
-        mileage: car.mileage || 0,
-        price: car.price || 0,
+        mileage: car.mileage || '',
+        price: car.price || '',
         transmission: car.transmission || '',
         type: car.type || '',
         fuelType: car.fuelType || '',
@@ -56,7 +56,7 @@ export default function CarForm({ car, onClose, onSave }) {
     const { name, value, type } = e.target
     setFormData(prev => ({
       ...prev,
-      [name]: type === 'number' ? parseFloat(value) || 0 : value
+      [name]: type === 'number' ? value : value
     }))
   }
 
@@ -195,9 +195,14 @@ export default function CarForm({ car, onClose, onSave }) {
     try {
       const formDataToSend = new FormData()
       
-      // Agregar datos del auto
+      // Agregar datos del auto con conversión de números
       Object.keys(formData).forEach(key => {
-        formDataToSend.append(key, formData[key])
+        let value = formData[key]
+        // Convertir campos numéricos vacíos a números válidos
+        if ((key === 'mileage' || key === 'price') && (value === '' || value === null)) {
+          value = key === 'mileage' ? 0 : 0  // mileage puede ser 0, price requerido será validado por HTML
+        }
+        formDataToSend.append(key, value)
       })
 
       // Si es edición, agregar ID
@@ -353,7 +358,7 @@ export default function CarForm({ car, onClose, onSave }) {
                 value={formData.mileage}
                 onChange={handleInputChange}
                 min="0"
-                placeholder="0"
+                placeholder="Ej: 50000"
                 className="text-sm sm:text-base"
               />
             </div>
@@ -369,7 +374,7 @@ export default function CarForm({ car, onClose, onSave }) {
                 required
                 min="0"
                 step="0.01"
-                placeholder="0.00"
+                placeholder="Ej: 15000"
                 className="text-sm sm:text-base"
               />
             </div>
@@ -464,17 +469,12 @@ export default function CarForm({ car, onClose, onSave }) {
               <div className="text-center">
                 <Upload className="mx-auto h-8 w-8 sm:h-12 sm:w-12 text-gray-400" />
                 <div className="mt-3 sm:mt-4">
-                  <Label htmlFor="images" className="cursor-pointer">
-                    <span className="mt-2 block text-sm font-medium text-gray-900">
-                      {car ? 'Seleccionar imágenes adicionales' : 'Seleccionar imágenes'}
-                    </span>
-                    <span className="mt-1 block text-xs sm:text-sm text-gray-500">
-                      PNG, JPG, JPEG hasta 10MB cada una
-                    </span>
-                    <span className="mt-1 block text-xs text-blue-600">
-                      📱 Móvil: Elige &quot;Seleccionar de Galería&quot; o &quot;Tomar Foto&quot; según prefieras
-                    </span>
-                  </Label>
+                  <span className="mt-2 block text-sm font-medium text-gray-900">
+                    {car ? 'Seleccionar imágenes adicionales' : 'Seleccionar imágenes'}
+                  </span>
+                  <span className="mt-1 block text-xs sm:text-sm text-gray-500">
+                    PNG, JPG, JPEG hasta 10MB cada una
+                  </span>
                   <Input
                     id="images"
                     type="file"
@@ -484,37 +484,18 @@ export default function CarForm({ car, onClose, onSave }) {
                     className="hidden"
                   />
                 </div>
-                <div className="mt-2 flex gap-2 justify-center">
+                <div className="mt-4">
                   <Button
                     type="button"
                     variant="outline"
                     size="sm"
                     onClick={() => document.getElementById('images').click()}
-                    className="text-xs sm:text-sm flex-1 max-w-[140px]"
+                    className="text-sm"
                   >
-                    📁 Seleccionar de Galería
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => document.getElementById('camera-input').click()}
-                    className="text-xs sm:text-sm flex-1 max-w-[120px]"
-                  >
-                    📷 Tomar Foto
+                    <ImageIcon className="h-4 w-4 mr-2" />
+                    Seleccionar Imágenes
                   </Button>
                 </div>
-                
-                {/* Hidden camera input */}
-                <Input
-                  id="camera-input"
-                  type="file"
-                  multiple
-                  accept="image/*"
-                  capture="environment"
-                  onChange={handleImageChange}
-                  className="hidden"
-                />
               </div>
             </div>
 

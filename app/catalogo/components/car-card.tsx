@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, memo, useRef, useEffect } from "react";
-import { OptimizedImageLazy } from "@/components/optimized-image-lazy";
+import Image from "next/image";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -15,9 +15,10 @@ import { useShare } from "@/components/share-button";
 
 interface CarCardProps {
   car: Car & { images: string[] }; // Aseguramos que 'images' sea un array de strings
+  priority?: boolean;
 }
 
-function CarCardComponent({ car }: CarCardProps) {
+function CarCardComponent({ car, priority = false }: CarCardProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const router = useRouter();
   const touchStartX = useRef<number | null>(null);
@@ -145,13 +146,13 @@ function CarCardComponent({ car }: CarCardProps) {
           onClick={handleCardClick}
         />
         
-        <OptimizedImageLazy
-          src={car.images[currentImageIndex] || "/placeholder-car.jpg"}
+        <Image
+          src={car.images && car.images.length > 0 ? car.images[currentImageIndex] : "/placeholder-car.jpg"}
           alt={`${car.brand} ${car.model}`}
           fill
           className="object-cover"
           sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
-          priority={currentImageIndex === 0}
+          priority={priority && currentImageIndex === 0}
         />
 
         {car.images.length > 1 && (

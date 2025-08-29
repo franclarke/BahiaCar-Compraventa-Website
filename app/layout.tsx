@@ -4,6 +4,7 @@ import { Inter } from 'next/font/google';
 import { Toaster } from "@/components/ui/toaster";
 import { Header } from "@/components/header";
 import { cn } from '@/lib/utils';
+import { ConditionalHeader } from '@/components/conditional-header';
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -159,9 +160,9 @@ export default function RootLayout({
         )}
         suppressHydrationWarning
       >
-        <div className="relative flex min-h-screen flex-col safe-area-inset-top safe-area-inset-bottom">
+        <div className="relative flex min-h-screen flex-col safe-area-inset-bottom">
           <div className="flex-1">
-            <Header />
+            <ConditionalHeader />
             <main id="main-content" role="main" className="scroll-smooth-mobile">
               {children}
             </main>
