@@ -472,7 +472,7 @@ export default function CarForm({ car, onClose, onSave }) {
                       PNG, JPG, JPEG hasta 10MB cada una
                     </span>
                     <span className="mt-1 block text-xs text-blue-600">
-                      📱 Móvil: Elige "Seleccionar de Galería" o "Tomar Foto" según prefieras
+                      📱 Móvil: Elige &quot;Seleccionar de Galería&quot; o &quot;Tomar Foto&quot; según prefieras
                     </span>
                   </Label>
                   <Input

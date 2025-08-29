@@ -53,6 +53,7 @@ const nextConfig = {
     serverMinification: true,
     serverComponentsExternalPackages: ['@prisma/client', 'prisma'],
     optimizePackageImports: ['@/components/ui', 'lucide-react'],
+    forceSwcTransforms: false, // Fallback to Babel if SWC fails
   },
 
   // Configuración específica para Netlify
@@ -61,6 +62,7 @@ const nextConfig = {
   // Optimizaciones adicionales
   compress: true,
   poweredByHeader: false,
+  swcMinify: process.env.NODE_ENV === 'production', // Use SWC only in production, fallback to Terser in development
 
   // Configuración para desarrollo
   onDemandEntries: {
