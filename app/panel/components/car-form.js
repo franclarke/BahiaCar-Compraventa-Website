@@ -568,10 +568,9 @@ export default function CarForm({ car, onClose, onSave }) {
                     id="images"
                     type="file"
                     multiple
-                    accept="image/*,image/jpg,image/jpeg,image/png,image/gif,image/webp,.jpg,.jpeg,.png,.gif,.webp"
+                    accept="image/*"
                     onChange={handleImageChange}
                     className="hidden"
-                    capture="environment"
                   />
                 </div>
                 <div className="mt-4">
