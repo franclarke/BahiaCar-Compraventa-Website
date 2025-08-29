@@ -501,7 +501,7 @@ export function CarFilters({ onFilterChange }: CarFiltersProps) {
               Filtrar Vehículos
             </Button>
           </SheetTrigger>
-          <SheetContent side="bottom" className="h-[85vh] overflow-auto">
+          <SheetContent side="bottom" className="h-[90vh] max-h-[600px] overflow-auto">
             <SheetHeader className="pb-4">
               <SheetTitle className="text-lg sm:text-xl">Filtros</SheetTitle>
               <SheetDescription className="text-sm sm:text-base">

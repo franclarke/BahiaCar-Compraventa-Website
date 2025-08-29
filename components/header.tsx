@@ -76,12 +76,12 @@ export function Header() {
           role="navigation"
           aria-label="Navegación móvil"
         >
-          <div className="flex items-center gap-0.5">
+          <div className="flex items-center gap-1">
             <Link href="/catalogo">
               <Button 
                 variant="ghost" 
                 size="sm"
-                className="font-medium text-xs px-2 h-8"
+                className="font-medium text-xs px-3 h-10 min-w-[44px]"
                 aria-label="Ver catálogo de vehículos"
               >
                 Catálogo
@@ -92,22 +92,22 @@ export function Header() {
               <Button 
                 variant="ghost" 
                 size="sm"
-                className="text-gray-400 hover:text-gray-600 hover:bg-gray-50 p-1 h-6 w-6"
+                className="text-gray-400 hover:text-gray-600 hover:bg-gray-50 p-2 h-10 w-10 min-w-[44px]"
                 aria-label="Acceso administrador"
               >
-                <User className="h-3 w-3"  />
+                <User className="h-4 w-4"  />
               </Button>
             </Link>
           </div>
           
           <SellCarDialog 
             triggerText="Vender" 
-            triggerClassName="text-xs px-2 h-8 font-medium hover:bg-blue-50 hover:text-blue-700"
+            triggerClassName="text-xs px-3 h-10 font-medium hover:bg-blue-50 hover:text-blue-700 min-w-[44px]"
           />
           
           <ContactDialog 
             triggerText="Contacto" 
-            triggerClassName="bg-primary text-white hover:bg-primary/90 text-xs px-2 h-8 font-medium"
+            triggerClassName="bg-primary text-white hover:bg-primary/90 text-xs px-3 h-10 font-medium min-w-[44px]"
           />
         </nav>
       </div>

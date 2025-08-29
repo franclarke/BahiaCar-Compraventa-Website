@@ -1,0 +1,33 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://bahiacarcompraventa.netlify.app/sitemap.xml
+
+# Optimizaciones para SEO
+Crawl-delay: 1
+
+# Permitir acceso a recursos importantes
+Allow: /api/cars
+Allow: /catalogo
+Allow: /_next/static/
+Allow: /favicon.ico
+Allow: /logo.svg
+Allow: /manifest.json
+
+# Bloquear acceso a rutas sensibles
+Disallow: /api/auth/
+Disallow: /panel/
+Disallow: /login
+Disallow: /api/messages/
+Disallow: /test-images/
+
+# Permitir bots específicos
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: facebookexternalhit
+Allow: /

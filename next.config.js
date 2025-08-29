@@ -52,6 +52,7 @@ const nextConfig = {
     scrollRestoration: true,
     serverMinification: true,
     serverComponentsExternalPackages: ['@prisma/client', 'prisma'],
+    optimizePackageImports: ['@/components/ui', 'lucide-react'],
   },
 
   // Configuración específica para Netlify
@@ -98,6 +99,15 @@ const nextConfig = {
           {
             key: 'Cache-Control',
             value: 'public, s-maxage=60, stale-while-revalidate=86400',
+          },
+        ],
+      },
+      {
+        source: '/api/cars/admin',
+        headers: [
+          {
+            key: 'Content-Length-Limit',
+            value: '50mb',
           },
         ],
       },

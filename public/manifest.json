@@ -2,11 +2,11 @@
   "name": "SYM Automotores - Compra y Venta de Autos",
   "short_name": "SYM Automotores",
   "description": "La plataforma confiable en Bahía Blanca para comprar y vender autos y camionetas",
-  "start_url": "/",
+  "start_url": "/?utm_source=pwa",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#0F172A",
-  "orientation": "portrait-primary",
+  "orientation": "any",
   "icons": [
 
     {

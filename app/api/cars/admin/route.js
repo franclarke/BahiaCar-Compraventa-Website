@@ -100,6 +100,17 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Faltan datos requeridos' }, { status: 400 })
     }
 
+    // Validar precio
+    if (isNaN(carData.price) || carData.price < 0) {
+      return NextResponse.json({ error: 'El precio debe ser un número válido' }, { status: 400 })
+    }
+
+    // Validar año
+    const currentYear = new Date().getFullYear()
+    if (carData.year < 1900 || carData.year > currentYear + 1) {
+      return NextResponse.json({ error: 'El año debe ser válido' }, { status: 400 })
+    }
+
     // Crear el auto primero
     const car = await prisma.car.create({
       data: {
@@ -112,8 +123,24 @@ export async function POST(request) {
     const imageFiles = formData.getAll('images')
     let imageUrls = []
 
-    // Filtrar archivos válidos (que tengan contenido)
-    const validImageFiles = imageFiles.filter(file => file && file.size > 0)
+    // Filtrar archivos válidos (que tengan contenido y sean imágenes)
+    const validImageFiles = imageFiles.filter(file => {
+      if (!file || file.size === 0) return false
+      
+      // Validar tipo MIME
+      if (!file.type.startsWith('image/')) {
+        console.warn(`Archivo rechazado - tipo inválido: ${file.type}`)
+        return false
+      }
+      
+      // Validar tamaño (50MB máximo en servidor)
+      if (file.size > 50 * 1024 * 1024) {
+        console.warn(`Archivo rechazado - muy grande: ${file.size} bytes`)
+        return false
+      }
+      
+      return true
+    })
 
     if (validImageFiles.length > 0) {
       console.log(`Subiendo ${validImageFiles.length} imágenes para el auto ${car.id}`)
@@ -199,8 +226,24 @@ export async function PUT(request) {
       imageUrls = []
     }
 
-    // Filtrar archivos válidos (que tengan contenido)
-    const validNewImageFiles = newImageFiles.filter(file => file && file.size > 0)
+    // Filtrar archivos válidos (que tengan contenido y sean imágenes)
+    const validNewImageFiles = newImageFiles.filter(file => {
+      if (!file || file.size === 0) return false
+      
+      // Validar tipo MIME
+      if (!file.type.startsWith('image/')) {
+        console.warn(`Archivo rechazado - tipo inválido: ${file.type}`)
+        return false
+      }
+      
+      // Validar tamaño (50MB máximo en servidor)
+      if (file.size > 50 * 1024 * 1024) {
+        console.warn(`Archivo rechazado - muy grande: ${file.size} bytes`)
+        return false
+      }
+      
+      return true
+    })
 
     if (validNewImageFiles.length > 0) {
       console.log(`Subiendo ${validNewImageFiles.length} nuevas imágenes para el auto ${carId}`)

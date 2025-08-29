@@ -74,13 +74,118 @@ export default function CarForm({ car, onClose, onSave }) {
     }))
   }
 
-  const handleImageChange = (e) => {
+  const handleImageChange = async (e) => {
     const files = Array.from(e.target.files)
-    setImages(files)
+    
+    // Validaciones antes del procesamiento
+    const validFiles = []
+    const invalidFiles = []
+    
+    for (const file of files) {
+      // Validar tipo de archivo
+      if (!file.type.startsWith('image/')) {
+        invalidFiles.push({ file: file.name, reason: 'No es una imagen válida' })
+        continue
+      }
+      
+      // Validar tamaño (10MB máximo)
+      if (file.size > 10 * 1024 * 1024) {
+        invalidFiles.push({ file: file.name, reason: 'Archivo muy grande (máx 10MB)' })
+        continue
+      }
+      
+      // Comprimir imagen si es muy grande
+      try {
+        const compressedFile = await compressImage(file)
+        validFiles.push(compressedFile)
+      } catch (error) {
+        console.error('Error comprimiendo imagen:', error)
+        invalidFiles.push({ file: file.name, reason: 'Error al procesar la imagen' })
+      }
+    }
+    
+    // Mostrar errores si los hay
+    if (invalidFiles.length > 0) {
+      const errorMessage = invalidFiles.map(item => `${item.file}: ${item.reason}`).join('\n')
+      toast({
+        title: 'Archivos no válidos',
+        description: errorMessage,
+        variant: 'destructive'
+      })
+    }
+    
+    // Agregar archivos válidos a la lista existente
+    setImages(prev => [...prev, ...validFiles])
+    
+    // Limpiar el input para permitir seleccionar los mismos archivos otra vez
+    e.target.value = ''
   }
 
   const removeImage = (index) => {
-    setImages(prev => prev.filter((_, i) => i !== index))
+    setImages(prev => {
+      const newImages = prev.filter((_, i) => i !== index)
+      // Limpiar URLs de objeto para liberar memoria
+      if (prev[index]) {
+        URL.revokeObjectURL(URL.createObjectURL(prev[index]))
+      }
+      return newImages
+    })
+  }
+  
+  // Función para comprimir imágenes
+  const compressImage = (file) => {
+    return new Promise((resolve, reject) => {
+      // Si el archivo es menor a 2MB, no comprimir
+      if (file.size < 2 * 1024 * 1024) {
+        resolve(file)
+        return
+      }
+      
+      const canvas = document.createElement('canvas')
+      const ctx = canvas.getContext('2d')
+      const img = new Image()
+      
+      img.onload = () => {
+        // Calcular nuevas dimensiones manteniendo aspect ratio
+        const maxWidth = 1920
+        const maxHeight = 1080
+        let { width, height } = img
+        
+        if (width > height) {
+          if (width > maxWidth) {
+            height = (height * maxWidth) / width
+            width = maxWidth
+          }
+        } else {
+          if (height > maxHeight) {
+            width = (width * maxHeight) / height
+            height = maxHeight
+          }
+        }
+        
+        canvas.width = width
+        canvas.height = height
+        
+        // Dibujar imagen redimensionada
+        ctx.drawImage(img, 0, 0, width, height)
+        
+        // Convertir a blob con calidad optimizada
+        canvas.toBlob((blob) => {
+          if (blob) {
+            const compressedFile = new File([blob], file.name, {
+              type: 'image/jpeg',
+              lastModified: Date.now()
+            })
+            resolve(compressedFile)
+          } else {
+            reject(new Error('Error al comprimir la imagen'))
+          }
+        }, 'image/jpeg', 0.8)
+      }
+      
+      img.onerror = () => reject(new Error('Error al cargar la imagen'))
+      img.src = URL.createObjectURL(file)
+    })
   }
 
   const handleSubmit = async (e) => {
@@ -124,12 +229,37 @@ export default function CarForm({ car, onClose, onSave }) {
       })
 
       if (response.ok) {
+        // Limpiar URLs de objeto para liberar memoria
+        images.forEach(image => {
+          if (typeof image === 'object') {
+            URL.revokeObjectURL(URL.createObjectURL(image))
+          }
+        })
+        
+        toast({
+          title: 'Éxito',
+          description: car ? 'Auto actualizado correctamente' : 'Auto creado correctamente',
+          variant: 'default'
+        })
+        
         onSave()
       } else {
         const error = await response.json()
+        
+        // Manejo específico de errores comunes en móviles
+        let errorMessage = error.error || 'Error al guardar el auto'
+        
+        if (error.error && error.error.includes('413')) {
+          errorMessage = 'Las imágenes son muy grandes. Intenta con imágenes más pequeñas.'
+        } else if (error.error && error.error.includes('timeout')) {
+          errorMessage = 'La conexión es lenta. Intenta con menos imágenes o una mejor conexión.'
+        } else if (error.error && error.error.includes('network')) {
+          errorMessage = 'Error de conexión. Verifica tu internet e intenta nuevamente.'
+        }
+        
         toast({
           title: 'Error',
-          description: error.error || 'Error al guardar el auto',
+          description: errorMessage,
           variant: 'destructive'
         })
       }
@@ -330,7 +460,7 @@ export default function CarForm({ car, onClose, onSave }) {
             <Label htmlFor="images" className="text-sm font-medium">
               {car ? 'Agregar más imágenes' : 'Imágenes'}
             </Label>
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 sm:p-6">
+            <div className="border-2 border-dashed border-gray-300 hover:border-gray-400 rounded-lg p-4 sm:p-6 transition-colors">
               <div className="text-center">
                 <Upload className="mx-auto h-8 w-8 sm:h-12 sm:w-12 text-gray-400" />
                 <div className="mt-3 sm:mt-4">
@@ -339,7 +469,10 @@ export default function CarForm({ car, onClose, onSave }) {
                       {car ? 'Seleccionar imágenes adicionales' : 'Seleccionar imágenes'}
                     </span>
                     <span className="mt-1 block text-xs sm:text-sm text-gray-500">
-                      {car ? 'Se agregarán a las existentes' : 'PNG, JPG, JPEG hasta 10MB cada una'}
+                      PNG, JPG, JPEG hasta 10MB cada una
+                    </span>
+                    <span className="mt-1 block text-xs text-blue-600">
+                      📱 Móvil: Puedes tomar fotos directamente o seleccionar de galería
                     </span>
                   </Label>
                   <Input
@@ -347,9 +480,21 @@ export default function CarForm({ car, onClose, onSave }) {
                     type="file"
                     multiple
                     accept="image/*"
+                    capture="environment"
                     onChange={handleImageChange}
                     className="hidden"
                   />
+                </div>
+                <div className="mt-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => document.getElementById('images').click()}
+                    className="text-xs sm:text-sm"
+                  >
+                    📷 Seleccionar Fotos
+                  </Button>
                 </div>
               </div>
             </div>

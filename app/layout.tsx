@@ -40,7 +40,13 @@ export const metadata: Metadata = {
     'camionetas',
     'vehículos usados',
     'concesionaria',
-    'bahía blanca'
+    'bahía blanca',
+    'autos usados bahía blanca',
+    'compraventa autos',
+    'SYM automotores',
+    'financiación autos',
+    'autos 0km',
+    'plan de ahorro'
   ],
   authors: [{ name: 'SYM Automotores' }],
   creator: 'SYM Automotores',
@@ -70,7 +76,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'SYM Automotores - Compra y Venta de Autos',
     description: 'La plataforma confiable en Bahía Blanca para comprar y vender autos y camionetas.',
-    images: ['/favicon.ico'],
+    images: ['/android-chrome-512x512.svg'],
   },
   robots: {
     index: true,
@@ -149,14 +155,14 @@ export default function RootLayout({
       <body 
         className={cn(
           inter.className,
-          'min-h-screen bg-background font-sans antialiased'
+          'min-h-screen bg-background font-sans antialiased text-mobile-optimized'
         )}
         suppressHydrationWarning
       >
-        <div className="relative flex min-h-screen flex-col">
+        <div className="relative flex min-h-screen flex-col safe-area-inset-top safe-area-inset-bottom">
           <div className="flex-1">
             <Header />
-            <main id="main-content" role="main">
+            <main id="main-content" role="main" className="scroll-smooth-mobile">
               {children}
             </main>
           </div>
